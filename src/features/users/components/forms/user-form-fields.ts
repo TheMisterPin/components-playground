@@ -1,0 +1,95 @@
+import type { FieldDef } from "@/components/shared/forms/types"
+import type { User } from "@/features/users/types/user-types"
+import {
+  userBioSchema,
+  userCreatedAtSchema,
+  userDepartmentSchema,
+  userEmailSchema,
+  userNameSchema,
+  userNotifySchema,
+  userPhoneSchema,
+  userRoleSchema,
+  userUpdatedAtSchema,
+} from "@/lib/schemas/user"
+
+export const userFormFields: FieldDef<User>[] = [
+  {
+    name: "email",
+    type: "text",
+    label: "Email",
+    placeholder: "you@example.com",
+    validation: userEmailSchema,
+    canEdit: false,
+  },
+  {
+    name: "name",
+    type: "text",
+    label: "Name",
+    placeholder: "Full name",
+    validation: userNameSchema,
+  },
+  {
+    name: "role",
+    type: "select",
+    label: "Role",
+    placeholder: "Select a role",
+    validation: userRoleSchema,
+    options: [
+      { label: "Admin", value: "admin" },
+      { label: "Editor", value: "editor" },
+      { label: "Viewer", value: "viewer" },
+    ],
+  },
+  {
+    name: "department",
+    type: "select",
+    label: "Department",
+    placeholder: "Select a department",
+    validation: userDepartmentSchema,
+    options: [
+      { label: "Engineering", value: "engineering" },
+      { label: "Design", value: "design" },
+      { label: "Product", value: "product" },
+      { label: "Operations", value: "operations" },
+    ],
+    visibleWhen: (values) => values.role !== "viewer",
+  },
+  {
+    name: "bio",
+    type: "textarea",
+    label: "Bio",
+    placeholder: "A short bio",
+    validation: userBioSchema,
+    colSpan: 2,
+  },
+  {
+    name: "notify",
+    type: "switch",
+    label: "Email notifications",
+    description: "Receive updates about account activity",
+    validation: userNotifySchema,
+    defaultValue: false,
+  },
+  {
+    name: "phone",
+    type: "text",
+    label: "Phone",
+    placeholder: "+1 555 000 0000",
+    validation: userPhoneSchema,
+    requiredWhen: (values) => values.notify === true,
+  },
+  {
+    name: "createdAt",
+    type: "date",
+    label: "Created at",
+    validation: userCreatedAtSchema,
+    hide: true,
+  },
+  {
+    name: "updatedAt",
+    type: "date",
+    label: "Updated at",
+    validation: userUpdatedAtSchema,
+    hide: true,
+  },
+]

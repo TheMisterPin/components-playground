@@ -1,5 +1,12 @@
 import type { LucideIcon } from "lucide-react"
-import { Home, LayoutDashboard, Settings, Users } from "lucide-react"
+import {
+  ClipboardList,
+  Home,
+  LayoutDashboard,
+  Settings,
+  SquareStack,
+  Users,
+} from "lucide-react"
 
 export type NavigationSubItem = {
   title: string
@@ -28,6 +35,16 @@ export const navigationItems: NavigationItem[] = [
     title: "Settings",
     icon: Settings,
     url: "/settings",
+  },
+  {
+    title: "Forms",
+    icon: ClipboardList,
+    url: "/forms",
+  },
+  {
+    title: "Modals",
+    icon: SquareStack,
+    url: "/modals",
   },
   {
     title: "Team",
