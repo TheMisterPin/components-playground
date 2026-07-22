@@ -24,7 +24,7 @@ ERP UI boilerplate. Prefer existing shared systems over one-off patterns. Human 
 | Errors (server) | `@/features/errors/server` + `dto` | same | same |
 | Toasts | `sonner` (`toast`) | error-handling + modals docs | — |
 | Shared zod | `src/lib/schemas/<model>.ts` | forms + error-handling | — |
-| Session / RBAC | `src/features/auth/session.ts` | error-handling | — |
+| Session / RBAC | `src/features/auth/permissions.ts` (`Actions`, `can`) + `session.ts` (`authorize`) | error-handling | — |
 
 ## Hard conventions
 
@@ -42,8 +42,7 @@ ERP UI boilerplate. Prefer existing shared systems over one-off patterns. Human 
 // Server
 export async function updateX(input: unknown): Promise<ActionResult<T>> {
   return withErrorBoundary(async () => {
-    requireSession()
-    requirePermission("…")
+    await authorize(Actions.users.write)
     return schema.parse(input)
   })
 }
@@ -75,4 +74,4 @@ if (data) toast.success("Saved")
 5. Wire UI with `useError().run()` + `applyServerErrors`
 6. Update `.docs` / rules only when conventions change
 
-Auth uses jose cookie sessions (`src/features/auth/utils.ts`) + Prisma users. Guards live in `src/features/auth/session.ts` and throw `AppError` with stable kinds/codes so the client channel table stays stable.
+Auth uses jose cookie sessions (`src/features/auth/utils.ts`) + Prisma users. RBAC: permission matrix + `Actions` catalog in `src/features/auth/permissions.ts`; server gate `authorize(Actions.*)` in `session.ts` (throws `AppError`); client UI `can(role, Actions.*)`. Kinds/codes stay stable for the client channel table.

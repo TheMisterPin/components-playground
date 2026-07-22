@@ -9,7 +9,7 @@ import { applyServerErrors } from "@/components/shared/forms/lib/apply-server-er
 import { useModal } from "@/components/shared/modals"
 import { DynamicTable } from "@/components/shared/table/dynamic-table"
 import { Button } from "@/components/ui/button"
-import { hasPermission } from "@/features/auth/permissions"
+import { Actions, can } from "@/features/auth/permissions"
 import { useAuth } from "@/features/auth/hooks/use-auth"
 import { useError } from "@/features/errors"
 import {
@@ -45,9 +45,7 @@ export function DepartmentListPageComponent() {
   const [departments, setDepartments] = useState<Department[]>([])
   const [loaded, setLoaded] = useState(false)
 
-  const canWrite = me
-    ? hasPermission(me.role, "departments:write")
-    : false
+  const canWrite = me ? can(me.role, Actions.departments.write) : false
 
   const load = useCallback(async () => {
     const data = await run(listDepartments())

@@ -9,7 +9,8 @@ import {
 import type { ActionResult } from "@/features/errors/dto"
 import { AppError, withErrorBoundary } from "@/features/errors/server"
 import { hashPassword } from "@/features/auth/password"
-import { requirePermission, requireSession } from "@/features/auth/session"
+import { Actions } from "@/features/auth/permissions"
+import { authorize } from "@/features/auth/session"
 import type { User } from "@/features/users/types/user-types"
 
 /** Demo-only force flags — strip before real backends ship. */
@@ -134,7 +135,7 @@ async function assertLocationExists(locationId: string | null): Promise<void> {
 
 export async function listUsers(): Promise<ActionResult<User[]>> {
   return withErrorBoundary(async () => {
-    await requirePermission("users:read")
+    await authorize(Actions.users.read)
     const rows = await prisma.user.findMany({
       where: { deletedAt: null },
       include: userInclude,
@@ -146,7 +147,7 @@ export async function listUsers(): Promise<ActionResult<User[]>> {
 
 export async function getUser(id: string): Promise<ActionResult<User>> {
   return withErrorBoundary(async () => {
-    await requirePermission("users:read")
+    await authorize(Actions.users.read)
     const row = await prisma.user.findFirst({
       where: { id, deletedAt: null },
       include: userInclude,
@@ -168,8 +169,7 @@ export async function createUser(
 ): Promise<ActionResult<User>> {
   return withErrorBoundary(async () => {
     applyForce(force)
-    await requireSession()
-    await requirePermission("users:write")
+    await authorize(Actions.users.write)
     const parsed = createUserSchema.parse(input)
 
     const departmentId = parsed.departmentId || null
@@ -227,8 +227,7 @@ export async function updateUser(
 ): Promise<ActionResult<User>> {
   return withErrorBoundary(async () => {
     applyForce(force)
-    await requireSession()
-    await requirePermission("users:write")
+    await authorize(Actions.users.write)
     const parsed = updateUserSchema.parse(input)
 
     const existing = await prisma.user.findFirst({
@@ -289,7 +288,7 @@ export async function updateUser(
 
 export async function deleteUser(id: string): Promise<ActionResult<true>> {
   return withErrorBoundary(async () => {
-    await requirePermission("users:write")
+    await authorize(Actions.users.write)
     const existing = await prisma.user.findFirst({
       where: { id, deletedAt: null },
     })

@@ -7,7 +7,8 @@ import {
 } from "@/lib/schemas/location"
 import type { ActionResult } from "@/features/errors/dto"
 import { AppError, withErrorBoundary } from "@/features/errors/server"
-import { requirePermission, requireSession } from "@/features/auth/session"
+import { Actions } from "@/features/auth/permissions"
+import { authorize } from "@/features/auth/session"
 import type { Location } from "@/features/locations/types/location-types"
 
 type LocationRow = {
@@ -51,7 +52,7 @@ async function assertManagerExists(managerId: string | null): Promise<void> {
 
 export async function listLocations(): Promise<ActionResult<Location[]>> {
   return withErrorBoundary(async () => {
-    await requirePermission("locations:read")
+    await authorize(Actions.locations.read)
     const rows = await prisma.location.findMany({
       where: { deletedAt: null },
       include: { manager: { select: { fullName: true } } },
@@ -63,7 +64,7 @@ export async function listLocations(): Promise<ActionResult<Location[]>> {
 
 export async function getLocation(id: string): Promise<ActionResult<Location>> {
   return withErrorBoundary(async () => {
-    await requirePermission("locations:read")
+    await authorize(Actions.locations.read)
     const row = await prisma.location.findFirst({
       where: { id, deletedAt: null },
       include: { manager: { select: { fullName: true } } },
@@ -83,8 +84,7 @@ export async function createLocation(
   input: unknown,
 ): Promise<ActionResult<Location>> {
   return withErrorBoundary(async () => {
-    await requireSession()
-    await requirePermission("locations:write")
+    await authorize(Actions.locations.write)
     const parsed = createLocationSchema.parse(input)
     const managerId = parsed.managerId || null
     await assertManagerExists(managerId)
@@ -107,8 +107,7 @@ export async function updateLocation(
   input: unknown,
 ): Promise<ActionResult<Location>> {
   return withErrorBoundary(async () => {
-    await requireSession()
-    await requirePermission("locations:write")
+    await authorize(Actions.locations.write)
     const parsed = updateLocationSchema.parse(input)
 
     const existing = await prisma.location.findFirst({
@@ -142,7 +141,7 @@ export async function updateLocation(
 
 export async function deleteLocation(id: string): Promise<ActionResult<true>> {
   return withErrorBoundary(async () => {
-    await requirePermission("locations:write")
+    await authorize(Actions.locations.write)
     const existing = await prisma.location.findFirst({
       where: { id, deletedAt: null },
     })

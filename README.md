@@ -44,7 +44,7 @@ Open [http://localhost:3000](http://localhost:3000).
 - Forms: `src/features/users/components/forms/`
 - Shared schema: `src/lib/schemas/user.ts`
 - Server actions: `src/features/users/actions/user-actions.ts`
-- Session / RBAC: `src/features/auth/session.ts`
+- Session / RBAC: `src/features/auth/permissions.ts` (`Actions`, `can`) + `session.ts` (`authorize`)
 
 Canonical client submit:
 
@@ -92,4 +92,4 @@ Agent instructions: [`AGENTS.md`](AGENTS.md) (also referenced by `CLAUDE.md`).
 
 - Prefer **pnpm**.
 - This Next.js version may differ from training data — see `AGENTS.md` and `node_modules/next/dist/docs/` before inventing APIs.
-- Auth uses jose cookie sessions + Prisma; guards in `src/features/auth/session.ts` throw `AppError` with stable kinds/codes so the client channel table stays stable.
+- Auth uses jose cookie sessions + Prisma; `authorize(Actions.*)` / `can(role, Actions.*)` use the permission matrix and throw/gate with stable `AppError` kinds/codes.

@@ -19,7 +19,7 @@ Use the shared error pipeline. Do not invent parallel result types, try/catch UI
 | Client barrel | `src/features/errors` (never re-exports `server.ts`) |
 | Field-error helper | `src/components/shared/forms/lib/apply-server-errors.ts` |
 | Shared zod | `src/lib/schemas/<model>.ts` |
-| Session / RBAC | `src/features/auth/session.ts` |
+| Session / RBAC | `src/features/auth/permissions.ts` + `session.ts` (`authorize`) |
 | App mount | `ErrorProvider` in `app-providers.tsx`; content-only `ErrorBoundary` in `app-shell.tsx` |
 
 ## Channel table (`DEFAULT_ERROR_CHANNELS`)
@@ -38,8 +38,7 @@ Use the shared error pipeline. Do not invent parallel result types, try/catch UI
 // ✅ server action
 export async function updateX(input: unknown): Promise<ActionResult<T>> {
   return withErrorBoundary(async () => {
-    requireSession()
-    requirePermission("…")
+    await authorize(Actions.users.write)
     const parsed = xSchema.parse(input)
     return persist(parsed)
   })

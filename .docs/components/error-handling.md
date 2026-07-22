@@ -34,7 +34,8 @@ src/features/errors/
   use-error.ts           handle, run, DEFAULT_ERROR_CHANNELS
   index.ts               Client-safe barrel (excludes server.ts)
 
-src/features/auth/session.ts   requireSession / requirePermission (cookie JWT + Role)
+src/features/auth/permissions.ts  Actions catalog + ROLE_PERMISSIONS + can()
+src/features/auth/session.ts       requireSession / authorize (cookie JWT + Role)
 src/lib/schemas/<model>.ts   Shared zod used by FieldDefs + server parse
 
 src/components/shared/forms/lib/apply-server-errors.ts
@@ -102,14 +103,14 @@ await run(action, { overrides: { conflict: "modal" } })
 
 import type { ActionResult } from "@/features/errors/dto"
 import { AppError, withErrorBoundary } from "@/features/errors/server"
-import { requirePermission, requireSession } from "@/features/auth/session"
+import { Actions } from "@/features/auth/permissions"
+import { authorize } from "@/features/auth/session"
 import { userSchema } from "@/lib/schemas/user"
 import type { User } from "@/features/users/types/user-types"
 
 export async function updateUser(input: unknown): Promise<ActionResult<User>> {
   return withErrorBoundary(async () => {
-    requireSession()
-    requirePermission("users:write")
+    await authorize(Actions.users.write)
     const parsed = userSchema.parse(input)
     // persist…
     return parsed
@@ -208,13 +209,16 @@ A crash in one page leaves navigation alive. `useError` needs both `ModalProvide
 
 ---
 
-## Auth session
+## Auth session / RBAC
 
-`src/features/auth/session.ts` + jose cookies in `src/features/auth/utils.ts`:
+Jose cookies in `src/features/auth/utils.ts`. Permission matrix + action catalog in `src/features/auth/permissions.ts`. Server gate in `session.ts`:
 
 - `getSession` / `createSession` / `clearSession` (cookie JWT with `userId`)
 - `requireSession()` → `AppError` `SESSION_EXPIRED`
-- `requirePermission(perm)` → `AppError` `FORBIDDEN` (`ADMIN` = read+write, `USER` = read)
+- `authorize(Actions.users.write)` → `AppError` `FORBIDDEN` when the session role lacks that permission
+- Client UI: `can(me.role, Actions.users.write)` (same matrix; import from `permissions.ts`, never `session.ts`)
+
+`ROLE_PERMISSIONS`: `ADMIN` = read+write for users/departments/locations; `USER` = read only.
 
 Keep throwing `AppError` with the same kinds/codes so the client channel table stays stable.
 

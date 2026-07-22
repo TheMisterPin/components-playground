@@ -7,7 +7,8 @@ import {
 } from "@/lib/schemas/department"
 import type { ActionResult } from "@/features/errors/dto"
 import { AppError, withErrorBoundary } from "@/features/errors/server"
-import { requirePermission, requireSession } from "@/features/auth/session"
+import { Actions } from "@/features/auth/permissions"
+import { authorize } from "@/features/auth/session"
 import type { Department } from "@/features/departments/types/department-types"
 
 function toPublicDepartment(row: {
@@ -30,7 +31,7 @@ function toPublicDepartment(row: {
 
 export async function listDepartments(): Promise<ActionResult<Department[]>> {
   return withErrorBoundary(async () => {
-    await requirePermission("departments:read")
+    await authorize(Actions.departments.read)
     const rows = await prisma.department.findMany({
       where: { deletedAt: null },
       orderBy: { name: "asc" },
@@ -43,7 +44,7 @@ export async function getDepartment(
   id: string,
 ): Promise<ActionResult<Department>> {
   return withErrorBoundary(async () => {
-    await requirePermission("departments:read")
+    await authorize(Actions.departments.read)
     const row = await prisma.department.findFirst({
       where: { id, deletedAt: null },
     })
@@ -62,8 +63,7 @@ export async function createDepartment(
   input: unknown,
 ): Promise<ActionResult<Department>> {
   return withErrorBoundary(async () => {
-    await requireSession()
-    await requirePermission("departments:write")
+    await authorize(Actions.departments.write)
     const parsed = createDepartmentSchema.parse(input)
 
     const row = await prisma.department.create({
@@ -82,8 +82,7 @@ export async function updateDepartment(
   input: unknown,
 ): Promise<ActionResult<Department>> {
   return withErrorBoundary(async () => {
-    await requireSession()
-    await requirePermission("departments:write")
+    await authorize(Actions.departments.write)
     const parsed = updateDepartmentSchema.parse(input)
 
     const existing = await prisma.department.findFirst({
@@ -114,7 +113,7 @@ export async function deleteDepartment(
   id: string,
 ): Promise<ActionResult<true>> {
   return withErrorBoundary(async () => {
-    await requirePermission("departments:write")
+    await authorize(Actions.departments.write)
     const existing = await prisma.department.findFirst({
       where: { id, deletedAt: null },
     })

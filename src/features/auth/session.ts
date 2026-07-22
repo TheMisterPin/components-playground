@@ -1,5 +1,7 @@
 import { AppError } from "@/features/errors/server"
 import {
+  type AppAction,
+  type Permission,
   hasPermission,
   permissionsForRole,
 } from "@/features/auth/permissions"
@@ -21,11 +23,10 @@ export async function requireSession(): Promise<AppSession> {
   return session
 }
 
-export async function requirePermission(
-  permission: string,
-): Promise<AppSession> {
+/** Universal RBAC gate — session role must hold `action.permission`. */
+export async function authorize(action: AppAction): Promise<AppSession> {
   const session = await requireSession()
-  if (!hasPermission(session.role, permission)) {
+  if (!hasPermission(session.role, action.permission)) {
     throw new AppError({
       kind: "permission",
       code: "FORBIDDEN",
@@ -33,4 +34,11 @@ export async function requirePermission(
     })
   }
   return session
+}
+
+/** @deprecated Prefer `authorize(Actions.*)`. */
+export async function requirePermission(
+  permission: Permission,
+): Promise<AppSession> {
+  return authorize({ id: permission, permission })
 }
