@@ -33,7 +33,9 @@ Open [http://localhost:3000](http://localhost:3000).
 | **Dynamic forms** — FieldDef registry, layouts, conditional fields | Feature forms (e.g. member create/edit modal) | [`.docs/components/forms.md`](.docs/components/forms.md) | [`.cursor/rules/dynamic-forms.mdc`](.cursor/rules/dynamic-forms.mdc) |
 | **Universal modals** — stack of notify / confirm / form | List-page create/edit/delete | [`.docs/components/modals.md`](.docs/components/modals.md) | [`.cursor/rules/universal-modals.mdc`](.cursor/rules/universal-modals.mdc) |
 | **Error handling** — `ActionResult`, `withErrorBoundary`, `useError().run()` | Server actions + list CRUD | [`.docs/components/error-handling.md`](.docs/components/error-handling.md) | [`.cursor/rules/error-handling.mdc`](.cursor/rules/error-handling.mdc) |
-| **Auth** — jose cookie session + middleware gate | `/login`, sidebar user/logout | — | — |
+| **Auth / RBAC** — jose session, middleware, `Actions` / `authorize` / `can` | `/login`, list write gates | [`.docs/components/auth.md`](.docs/components/auth.md) | [`.cursor/rules/auth-rbac.mdc`](.cursor/rules/auth-rbac.mdc) |
+| **DynamicTable** — columns, toolbar/row actions | Members / org lists | [`.docs/components/tables.md`](.docs/components/tables.md) | [`.cursor/rules/dynamic-table.mdc`](.cursor/rules/dynamic-table.mdc) |
+| **List-page CRUD** — table + modals + RBAC | `/team/members`, org pages | [`.docs/components/list-pages.md`](.docs/components/list-pages.md) | [`.cursor/rules/list-page-crud.mdc`](.cursor/rules/list-page-crud.mdc) |
 
 ### Layout
 

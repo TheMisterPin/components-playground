@@ -114,9 +114,12 @@ If the form is dirty and the user tries to close (ESC, overlay, X), a destructiv
 Canonical pattern for feature list pages (`UserListPageComponent`, departments, locations):
 
 1. Pass `toolbarActions` (Create) and `rowActions` (Edit / Delete) into `DynamicTable`.
-2. Gate write UI with `hasPermission(me.role, "<feature>:write")` from `@/features/auth/permissions`.
+2. Gate write UI with `can(me.role, Actions.<feature>.write)` from `@/features/auth/permissions`.
 3. Create/Edit → `openModal({ type: "form", … })` with dirty bridge; submit via `useError().run()` + `applyServerErrors`; on success `toast.success`, `closeModal`, reload list.
 4. Delete → `confirm({ variant: "destructive" })` then `run(deleteX(id))` + toast + reload.
+
+Full guide: [List pages](./list-pages.md). Auth: [Auth & RBAC](./auth.md).
+
 
 ```tsx
 let formId = ""

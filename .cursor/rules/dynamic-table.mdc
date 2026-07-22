@@ -1,0 +1,45 @@
+---
+description: DynamicTable columns, row mapping, toolbarActions and rowActions
+globs: src/components/shared/table/**/*,src/features/**/components/tables/**/*,src/features/**/components/pages/**
+alwaysApply: false
+---
+
+# DynamicTable
+
+Use the shared `DynamicTable` for feature lists. Do not invent a parallel DataTable or bury row actions inside `ColumnConfig.format`.
+
+## Layout
+
+| Concern | Path |
+|---------|------|
+| Table | `src/components/shared/table/dynamic-table.tsx` |
+| Feature columns | `src/features/<feature>/components/tables/*-table-columns.tsx` |
+| List pages | `src/features/<feature>/components/pages/*list-page-component.tsx` |
+
+## API
+
+```ts
+type DynamicTableProps = {
+  data: Record<string, unknown>[]
+  columns?: ColumnConfig[]
+  pageSize?: number
+  searchable?: boolean
+  sortable?: boolean
+  filterable?: boolean
+  groupable?: boolean
+  toolbarActions?: ReactNode
+  rowActions?: (ctx: { row: Record<string, unknown> }) => ReactNode
+}
+```
+
+- `data` is flattened rows (`toXTableRow`), not rich domain objects
+- Map `row.id` back to the domain entity for Edit/Delete handlers
+- `toolbarActions` → Create (and similar); `rowActions` → Edit/Delete
+- Actions column is automatic when `rowActions` is set; skip group header rows
+- Never use key `__actions` in column configs / search fields
+
+## Feature columns file
+
+Export `xTableColumns: ColumnConfig[]` and `toXTableRow(entity)`. Prefer displaying joined names (`departmentName`) over raw UUIDs.
+
+See `.docs/components/tables.md` and list-page CRUD docs for wiring.

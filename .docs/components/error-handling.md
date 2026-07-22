@@ -211,14 +211,11 @@ A crash in one page leaves navigation alive. `useError` needs both `ModalProvide
 
 ## Auth session / RBAC
 
-Jose cookies in `src/features/auth/utils.ts`. Permission matrix + action catalog in `src/features/auth/permissions.ts`. Server gate in `session.ts`:
+Jose cookies in `src/features/auth/utils.ts`. Full guide: [Auth & RBAC](./auth.md).
 
-- `getSession` / `createSession` / `clearSession` (cookie JWT with `userId`)
-- `requireSession()` → `AppError` `SESSION_EXPIRED`
 - `authorize(Actions.users.write)` → `AppError` `FORBIDDEN` when the session role lacks that permission
-- Client UI: `can(me.role, Actions.users.write)` (same matrix; import from `permissions.ts`, never `session.ts`)
-
-`ROLE_PERMISSIONS`: `ADMIN` = read+write for users/departments/locations; `USER` = read only.
+- Client UI: `can(me.role, Actions.users.write)` (import from `permissions.ts`, never `session.ts`)
+- Matrix: `ROLE_PERMISSIONS` — `ADMIN` = read+write; `USER` = read only
 
 Keep throwing `AppError` with the same kinds/codes so the client channel table stays stable.
 
@@ -254,7 +251,9 @@ Keep throwing `AppError` with the same kinds/codes so the client channel table s
 | File | Role |
 |------|------|
 | `.cursor/rules/error-handling.mdc` | Agent rule |
+| `.docs/components/auth.md` | Session + RBAC |
 | `.docs/components/forms.md` | DynamicForm + `applyServerErrors` |
 | `.docs/components/modals.md` | `notify` for blocking errors |
+| `.docs/components/list-pages.md` | List CRUD |
 | `src/features/users/actions/user-actions.ts` | Reference server actions |
 | `src/features/users/components/pages/userlist-page-component.tsx` | List-page CRUD |

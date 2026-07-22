@@ -24,15 +24,19 @@ ERP UI boilerplate. Prefer existing shared systems over one-off patterns. Human 
 | Errors (server) | `@/features/errors/server` + `dto` | same | same |
 | Toasts | `sonner` (`toast`) | error-handling + modals docs | — |
 | Shared zod | `src/lib/schemas/<model>.ts` | forms + error-handling | — |
-| Session / RBAC | `src/features/auth/permissions.ts` (`Actions`, `can`) + `session.ts` (`authorize`) | error-handling | — |
+| Auth / RBAC | `permissions.ts` (`Actions`, `can`) + `session.ts` (`authorize`) | `.docs/components/auth.md` | `auth-rbac.mdc` |
+| DynamicTable | `@/components/shared/table/dynamic-table` | `.docs/components/tables.md` | `dynamic-table.mdc` |
+| List-page CRUD | feature `*list-page-component.tsx` | `.docs/components/list-pages.md` | `list-page-crud.mdc` |
 
 ## Hard conventions
 
 - **Server actions** always return `ActionResult<T>` via `withErrorBoundary`. Never throw across the wire. Known failures: `throw new AppError({ kind, code, message })`.
 - **Client actions** use only `useError().run()` — no try/catch UI in feature components. Map Zod field errors with `applyServerErrors(form, fe)`.
+- **RBAC**: server `await authorize(Actions.<feature>.read|write)`; client `can(me.role, Actions.<feature>.write)`. Matrix + catalog in `permissions.ts`. Never import `session.ts` from client.
 - **Forms**: FieldDef arrays + thin `*Form` wrappers around `DynamicForm`. `onSubmit(values, form)`. Shared validators from `src/lib/schemas/`.
 - **Modals**: `confirm` / `notify` / `openModal({ type: "form" })`. Transient feedback → toast, not `notify`. Modal package must not import form types.
-- **Layout**: Error Boundary wraps content only inside `AppShell` — leave sidebar/header outside.
+- **Tables**: `DynamicTable` + `toXTableRow` + `toolbarActions` / `rowActions` (not action cells in `format`).
+- **Layout**: Error Boundary wraps content only inside `AppShell` — leave sidebar/header outside. Providers in `AppProviders` (Modal → Auth → Error → ModalRoot).
 - **Import hygiene**: client may import `@/features/errors` (barrel). Never import `@/features/errors/server` from client code.
 - Named exports; strict TypeScript; no `any` on public APIs.
 
@@ -69,9 +73,12 @@ if (data) toast.success("Saved")
 
 1. `src/features/<feature>/types/` — model types
 2. `src/lib/schemas/<model>.ts` — shared zod
-3. `components/forms/*-form-fields.ts` + thin `*Form`
-4. `actions/*-actions.ts` — `"use server"` + `withErrorBoundary`
-5. Wire UI with `useError().run()` + `applyServerErrors`
-6. Update `.docs` / rules only when conventions change
+3. Extend RBAC: `Permission`, `ROLE_PERMISSIONS`, `Actions.<feature>` in `permissions.ts`
+4. `components/forms/*-form-fields.ts` + thin `*Form`
+5. `components/tables/*-table-columns.tsx` + `toXTableRow`
+6. `actions/*-actions.ts` — `"use server"` + `withErrorBoundary` + `authorize` + soft-delete (`deletedAt`)
+7. `components/pages/*list-page-component.tsx` — table + modal CRUD + `can(...)`
+8. Thin route under `src/app/(app)/…/page.tsx` + entry in `src/lib/navigation.ts`
+9. Update `.docs` / rules only when conventions change
 
-Auth uses jose cookie sessions (`src/features/auth/utils.ts`) + Prisma users. RBAC: permission matrix + `Actions` catalog in `src/features/auth/permissions.ts`; server gate `authorize(Actions.*)` in `session.ts` (throws `AppError`); client UI `can(role, Actions.*)`. Kinds/codes stay stable for the client channel table.
+Auth uses jose cookie sessions (`src/features/auth/utils.ts`) + Prisma users. Guards live in `src/features/auth/session.ts` and throw `AppError` with stable kinds/codes so the client channel table stays stable.

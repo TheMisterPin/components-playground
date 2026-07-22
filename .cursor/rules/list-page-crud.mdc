@@ -1,0 +1,42 @@
+---
+description: List-page CRUD with DynamicTable, modals, run(), and RBAC can()
+globs: src/features/**/components/pages/**/*,src/app/(app)/**/page.tsx
+alwaysApply: false
+---
+
+# List-page CRUD
+
+Canonical pattern for feature list pages (members, departments, locations). Do not invent parallel dialog stacks or skip RBAC UI gates.
+
+## Shape
+
+1. Load list via `useError().run(listX())`; keep a `load()` helper for post-mutation refresh
+2. Gate write UI with `can(me.role, Actions.<feature>.write)` from `@/features/auth/permissions`
+3. `DynamicTable` gets `toolbarActions` (Create) and `rowActions` (Edit / Delete)
+4. Create/Edit → `openModal({ type: "form", … })` + dirty bridge + `run` + `applyServerErrors` + toast + `closeModal` + `load()`
+5. Delete → `confirm({ variant: "destructive" })` → `run(deleteX(id))` → toast + `load()`
+6. Empty state still shows Create when `canWrite` (not a dead end)
+
+```ts
+const canWrite = me ? can(me.role, Actions.users.write) : false
+
+await authorize(Actions.users.write) // server actions only
+```
+
+## Imports
+
+| Need | From |
+|------|------|
+| Table | `@/components/shared/table/dynamic-table` |
+| Modals | `@/components/shared/modals` → `useModal` |
+| Errors | `@/features/errors` → `useError` |
+| RBAC UI | `@/features/auth/permissions` → `Actions`, `can` |
+| Auth me | `@/features/auth/hooks/use-auth` |
+
+Never import `@/features/auth/session` or `@/features/errors/server` from list pages.
+
+## App route
+
+Thin wrapper under `src/app/(app)/…/page.tsx` that mounts the feature `*ListPageComponent` (full-bleed `table-shell` layout as in team/members).
+
+See `.docs/components/list-pages.md` and mirror `src/features/users/components/pages/userlist-page-component.tsx`.
