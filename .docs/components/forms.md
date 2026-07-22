@@ -18,7 +18,9 @@ Use `DynamicForm` for feature create/edit forms that need:
 - Locked fields in edit mode
 - Single-page, multi-step, or tabbed layouts
 
-Do **not** use it for tiny one-off controls (e.g. sidebar search). Do **not** load select options asynchronously — that is out of scope.
+Do **not** use it for tiny one-off controls (e.g. sidebar search).
+
+`FieldDef` `options` arrays are **static** at render time. When options come from the server (departments, managers, …), load them in the thin `*Form` wrapper with `useError().run(listX())`, then pass the arrays into a `build*FormFields({ …options })` helper. Do **not** fetch inside `FieldDef`, field inputs, or `DynamicForm`.
 
 ---
 
@@ -50,7 +52,7 @@ src/lib/schemas/            Shared zod validators (FieldDefs + server parse)
 export type User = {
   email: string
   name: string
-  role: "admin" | "editor" | "viewer"
+  role: "ADMIN" | "USER"
   department?: string
   notify: boolean
   phone?: string
@@ -74,6 +76,16 @@ export const userFormFields: FieldDef<User>[] = [
     canEdit: false, // locked when isEdit
   },
   {
+    name: "role",
+    type: "select",
+    label: "Role",
+    validation: z.enum(["ADMIN", "USER"]),
+    options: [
+      { label: "Admin", value: "ADMIN" },
+      { label: "User", value: "USER" },
+    ],
+  },
+  {
     name: "department",
     type: "select",
     label: "Department",
@@ -82,7 +94,7 @@ export const userFormFields: FieldDef<User>[] = [
       { label: "Engineering", value: "engineering" },
       { label: "Design", value: "design" },
     ],
-    visibleWhen: (values) => values.role !== "viewer",
+    visibleWhen: (values) => values.role === "ADMIN",
   },
   {
     name: "phone",
@@ -94,6 +106,18 @@ export const userFormFields: FieldDef<User>[] = [
 ]
 ```
 
+When select options are dynamic, prefer a builder (see `UserForm` / `LocationForm`):
+
+```ts
+export function buildCreateUserFormFields(opts: {
+  departmentOptions: SelectOption[]
+  locationOptions: SelectOption[]
+}): FieldDef<UserFormValues>[] {
+  // … FieldDefs with options: opts.departmentOptions, etc.
+}
+```
+
+Load those options in the `*Form` wrapper before rendering `DynamicForm`.
 ### 3. Thin wrapper
 
 ```tsx

@@ -50,7 +50,7 @@ if (data) toast.success("Saved")
 ## FieldDef rules
 
 - Every field needs `name`, `type`, `label`, and `validation` (zod).
-- `select` / `multiselect` / `radio` require static `options` — no async option loading.
+- `select` / `multiselect` / `radio` require static `options` arrays on the FieldDef. Load dynamic options in the `*Form` wrapper via `run(listX())`, then pass them into `build*FormFields({ …options })`. Do not fetch inside FieldDef definitions or field inputs.
 - `visibleWhen` / `requiredWhen` receive full form values; hidden fields are dropped from validation.
 - `hide: true` — never render (e.g. timestamps). `canEdit: false` — disabled only when `isEdit`.
 - Prefer `type` from the registry; use `render` only as an escape hatch.

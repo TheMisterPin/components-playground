@@ -7,24 +7,46 @@ Next.js (App Router) ERP boilerplate / component playground. Shared UI systems l
 - **Next.js 15** App Router + TypeScript
 - **shadcn/ui** + Tailwind
 - **react-hook-form** + **zod**
+- **Prisma** + PostgreSQL
 - **sonner** toasts
 - Package manager: **pnpm**
 
 ## Getting started
 
 ```bash
+cp .env.example .env
+# Edit .env — set DATABASE_URL and JWT_SECRET
+
 pnpm install
+pnpm db:generate
+pnpm db:migrate
+pnpm db:seed
 pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
+
+### Demo credentials
+
+Seeded by `pnpm db:seed`:
+
+| Email | Password | Role |
+|-------|----------|------|
+| `admin@example.com` | `password123` | ADMIN (read + write) |
+| `user@example.com` | `password123` | USER (read-only) |
+
+### Scripts
 
 | Script | Command |
 |--------|---------|
 | Dev | `pnpm dev` |
 | Build | `pnpm build` |
 | Lint | `pnpm lint` |
+| Typecheck | `pnpm typecheck` |
 | Start | `pnpm start` |
+| Generate Prisma client | `pnpm db:generate` |
+| Migrate DB | `pnpm db:migrate` |
+| Seed demo data | `pnpm db:seed` |
 
 ## What’s implemented
 
@@ -61,20 +83,25 @@ if (data) toast.success("Saved")
 
 ```
 src/
-  app/                      Routes (forms, modals, login, stubs…)
+  app/                      Routes (login, home, team, organization)
   components/
     shared/forms/           DynamicForm system
     shared/modals/          Modal stack
     shared/layout/          AppShell, sidebar, header
+    shared/table/           DynamicTable
     ui/                     shadcn primitives
   features/
+    auth/                   Sessions, RBAC, login actions
     errors/                 Error DTO, boundary, useError (client barrel)
-    users/                  Reference vertical
+    users/                  Reference vertical (members)
+    departments/            Org vertical
+    locations/              Org vertical
   lib/
-    auth/mock.ts            Stub session / permissions
     schemas/                Shared zod (FieldDefs + server)
     navigation.ts           Sidebar nav
+    db.ts / env.ts          Prisma + env helpers
 
+prisma/                     Schema, migrations, seed
 .docs/components/           Human guides
 .cursor/rules/              Agent rules (glob-scoped)
 AGENTS.md                   Agent entrypoint (Next.js + this repo)
@@ -95,3 +122,4 @@ Agent instructions: [`AGENTS.md`](AGENTS.md) (also referenced by `CLAUDE.md`).
 - Prefer **pnpm**.
 - This Next.js version may differ from training data — see `AGENTS.md` and `node_modules/next/dist/docs/` before inventing APIs.
 - Auth uses jose cookie sessions + Prisma; `authorize(Actions.*)` / `can(role, Actions.*)` use the permission matrix and throw/gate with stable `AppError` kinds/codes.
+- Generated Prisma client lives under `src/generated/prisma` (gitignored) — run `pnpm db:generate` after install.

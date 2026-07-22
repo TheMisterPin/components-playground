@@ -1,11 +1,5 @@
 import type { LucideIcon } from "lucide-react"
-import {
-  Building2,
-  Home,
-  LayoutDashboard,
-  Settings,
-  Users,
-} from "lucide-react"
+import { Building2, Home, Users } from "lucide-react"
 
 export type NavigationSubItem = {
   title: string
@@ -26,24 +20,10 @@ export const navigationItems: NavigationItem[] = [
     url: "/",
   },
   {
-    title: "Dashboard",
-    icon: LayoutDashboard,
-    url: "/dashboard",
-  },
-  {
-    title: "Settings",
-    icon: Settings,
-    url: "/settings",
-  },
-  {
     title: "Team",
     icon: Users,
     url: "/team",
-    items: [
-      { title: "Members", url: "/team/members" },
-      { title: "Permissions", url: "/team/permissions" },
-      { title: "Invitations", url: "/team/invitations" },
-    ],
+    items: [{ title: "Members", url: "/team/members" }],
   },
   {
     title: "Organization",

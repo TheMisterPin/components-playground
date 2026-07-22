@@ -64,6 +64,7 @@ if (data) toast.success("Saved")
 
 | Route | What it proves |
 |-------|----------------|
+| `/` | Home landing — links to the three list CRUD demos |
 | `/login` | Auth gate entry + `SESSION_EXPIRED` acknowledge target |
 | `/team/members` | List-page CRUD (forms + modals + `run()`) |
 | `/organization/departments` | Org vertical + list CRUD |

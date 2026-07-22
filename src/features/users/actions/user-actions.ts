@@ -13,47 +13,6 @@ import { Actions } from "@/features/auth/permissions"
 import { authorize } from "@/features/auth/session"
 import type { User } from "@/features/users/types/user-types"
 
-/** Demo-only force flags — strip before real backends ship. */
-export type ForceErrorKind =
-  | "auth"
-  | "permission"
-  | "internal"
-  | "conflict"
-  | "not_found"
-
-function applyForce(force?: ForceErrorKind): void {
-  if (!force) return
-
-  switch (force) {
-    case "auth":
-      throw new AppError({
-        kind: "auth",
-        code: "SESSION_EXPIRED",
-        message: "Your session has expired. Please sign in again.",
-      })
-    case "permission":
-      throw new AppError({
-        kind: "permission",
-        code: "FORBIDDEN",
-        message: "You do not have permission to perform this action.",
-      })
-    case "conflict":
-      throw new AppError({
-        kind: "conflict",
-        code: "DUPLICATE_EMAIL",
-        message: "A user with this email already exists.",
-      })
-    case "not_found":
-      throw new AppError({
-        kind: "not_found",
-        code: "USER_NOT_FOUND",
-        message: "That user could not be found.",
-      })
-    case "internal":
-      throw new Error("Simulated unexpected failure (logged server-side only)")
-  }
-}
-
 type UserRow = {
   id: string
   email: string
@@ -165,10 +124,8 @@ export async function getUser(id: string): Promise<ActionResult<User>> {
 
 export async function createUser(
   input: unknown,
-  force?: ForceErrorKind,
 ): Promise<ActionResult<User>> {
   return withErrorBoundary(async () => {
-    applyForce(force)
     await authorize(Actions.users.write)
     const parsed = createUserSchema.parse(input)
 
@@ -223,10 +180,8 @@ export async function createUser(
 
 export async function updateUser(
   input: unknown,
-  force?: ForceErrorKind,
 ): Promise<ActionResult<User>> {
   return withErrorBoundary(async () => {
-    applyForce(force)
     await authorize(Actions.users.write)
     const parsed = updateUserSchema.parse(input)
 

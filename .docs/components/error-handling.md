@@ -231,7 +231,7 @@ Keep throwing `AppError` with the same kinds/codes so the client channel table s
 | Conflict / not found / internal | Error toast; internal also `console.error` on server |
 | Rejected promise → boundary | Content fallback; sidebar still works |
 
-`skipClientValidation` on `DynamicForm` / `UserForm` is **demo/testing only**.
+`skipClientValidation` on `DynamicForm` is an escape hatch — do not use it in feature forms.
 
 ---
 

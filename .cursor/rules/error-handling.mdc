@@ -63,6 +63,6 @@ if (data) toast.success("Saved")
 - Do not customize the Error Boundary fallback per page.
 - Do not import `server.ts` from client components or from the client barrel.
 - Shared FieldDef validators come from `src/lib/schemas/` so client and server stay aligned.
-- `skipClientValidation` is demo/testing only.
+- Do not use `skipClientValidation` in feature forms.
 
 See `.docs/components/error-handling.md` for the full human guide.

@@ -24,8 +24,6 @@ type UserFormProps = {
   ) => void | Promise<void>
   submitLabel?: string
   onDirtyChange?: (isDirty: boolean) => void
-  /** Demo/testing only — bypass client Zod so server field errors can be verified */
-  skipClientValidation?: boolean
 }
 
 export function UserForm({
@@ -34,7 +32,6 @@ export function UserForm({
   onSubmit,
   submitLabel,
   onDirtyChange,
-  skipClientValidation,
 }: UserFormProps) {
   const { run } = useError()
   const [departmentOptions, setDepartmentOptions] = useState<SelectOption[]>(
@@ -92,7 +89,6 @@ export function UserForm({
       onSubmit={onSubmit}
       submitLabel={submitLabel ?? (isEdit ? "Save changes" : "Create user")}
       onDirtyChange={onDirtyChange}
-      skipClientValidation={skipClientValidation}
     />
   )
 }
