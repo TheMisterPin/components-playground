@@ -1,6 +1,6 @@
 ---
 description: Audit trail via logActivity + ADMIN activity list; never raw userActivity.create
-globs: src/features/logging/**/*,src/features/auth/actions/**/*,src/features/users/actions/**/*,src/app/api/auth/**/*
+globs: src/features/logging/**/*,src/features/auth/actions/**/*,src/features/users/actions/**/*
 alwaysApply: false
 ---
 

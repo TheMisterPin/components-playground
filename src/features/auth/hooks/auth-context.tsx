@@ -15,7 +15,6 @@ import {
   logoutAction,
 } from "@/features/auth/actions/auth-actions"
 import type { Me } from "@/features/auth/types"
-import { get as apiGet } from "@/features/auth/api/api"
 
 export type AuthStatus = "loading" | "authenticated" | "unauthenticated"
 
@@ -29,19 +28,7 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | null>(null)
 
-async function fetchMeViaApi(): Promise<Me | null> {
-  try {
-    const res = await apiGet<Me>("/auth/me")
-    return res.data
-  } catch {
-    return null
-  }
-}
-
 async function resolveMe(): Promise<Me | null> {
-  const fromApi = await fetchMeViaApi()
-  if (fromApi) return fromApi
-
   const result = await getMeAction()
   if (result.ok && result.data) return result.data
   return null

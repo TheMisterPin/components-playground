@@ -40,25 +40,6 @@ export async function listDepartments(): Promise<ActionResult<Department[]>> {
   })
 }
 
-export async function getDepartment(
-  id: string,
-): Promise<ActionResult<Department>> {
-  return withErrorBoundary(async () => {
-    await authorize(Actions.departments.read)
-    const row = await prisma.department.findFirst({
-      where: { id, deletedAt: null },
-    })
-    if (!row) {
-      throw new AppError({
-        kind: "not_found",
-        code: "DEPARTMENT_NOT_FOUND",
-        message: "That department could not be found.",
-      })
-    }
-    return toPublicDepartment(row)
-  })
-}
-
 export async function createDepartment(
   input: unknown,
 ): Promise<ActionResult<Department>> {

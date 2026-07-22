@@ -16,6 +16,8 @@ Canonical pattern for feature list pages (members, departments, locations). Do n
 4. Create/Edit → `openModal({ type: "form", … })` + dirty bridge + `run` + `applyServerErrors` + toast + `closeModal` + `load()`
 5. Delete → `confirm({ variant: "destructive" })` → `run(deleteX(id))` → toast + `load()`
 6. Empty state still shows Create when `canWrite` (not a dead end)
+7. Show “Loading…” until first fetch settles (`loaded` flag). Lists are full arrays — DynamicTable pages/filters client-side only
+8. Do not add `[id]` detail routes or orphan `getX(id)` unless the task asks for them
 
 ```ts
 const canWrite = me ? can(me.role, Actions.users.write) : false

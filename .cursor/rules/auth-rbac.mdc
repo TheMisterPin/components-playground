@@ -1,6 +1,6 @@
 ---
 description: Auth session, middleware gate, and RBAC Actions/authorize/can conventions
-globs: src/features/auth/**/*,src/middleware.ts,src/app/api/auth/**/*,src/app/(auth)/**/*,src/components/shared/layout/app-providers.tsx,src/features/**/actions/**
+globs: src/features/auth/**/*,src/middleware.ts,src/app/(auth)/**/*,src/components/shared/layout/app-providers.tsx,src/features/**/actions/**
 alwaysApply: false
 ---
 
@@ -23,9 +23,13 @@ Use jose cookie sessions + the permission-matrix action catalog. Do not invent N
 ## Middleware
 
 - Unauthenticated non-public routes → redirect `/login?next=…`
-- Public: `/login`, `/api/auth/*`
+- Public: `/login` only
 - Authenticated `/login` → `/`
 - With session → refresh cookie via `updateSession`
+
+## Auth surface
+
+Server actions only: `loginAction` / `logoutAction` / `getMeAction` via `useAuth`. Do not invent REST `/api/auth/*` or axios session clients.
 
 ## Provider order
 

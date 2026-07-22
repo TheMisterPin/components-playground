@@ -54,7 +54,7 @@ await logActivity({
 
 | Event | Where |
 |-------|--------|
-| `LOGIN` | `loginAction`, `POST /api/auth/login` |
+| `LOGIN` | `loginAction` |
 | `LOGOUT` | `logoutAction` |
 | `REGISTER` | `createUser` |
 

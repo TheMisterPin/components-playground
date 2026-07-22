@@ -109,6 +109,18 @@ Soft-delete is the server convention (`deletedAt` + `isActive: false`).
 
 ---
 
+## Loading and empty states
+
+Mirror users / departments / locations:
+
+1. `loaded` boolean — show a short “Loading…” until the first `run(listX())` settles
+2. After load, empty list still shows the page with Create in `toolbarActions` when `canWrite` (not a dead end)
+3. Read-only lists (e.g. activity): if `!can(…read)`, show a permission message; do not call the list action
+
+`DynamicTable` search / filter / sort / page are **client-side** on the full array from `listX()`. Do not add server pagination unless deliberately building that pattern.
+
+---
+
 ## Related
 
 | Doc / rule | Role |

@@ -16,11 +16,9 @@ src/features/auth/
   password.ts        hash / authenticate
   hooks/             AuthProvider, useAuth
   actions/           loginAction, logoutAction, getMeAction
-  api/               thin fetch helpers for /api/auth/*
 
 src/middleware.ts
 src/app/(auth)/login/
-src/app/api/auth/    login + me routes
 src/components/shared/layout/app-providers.tsx
 ```
 
@@ -43,7 +41,7 @@ Do not put passwords in the JWT. Public user shape is `Me` (`src/features/auth/t
 | No session, not public | Redirect `/login?next=<pathname>` |
 | Session on `/login` | Redirect `/` |
 | Session elsewhere | Refresh cookie (`updateSession`) then continue |
-| Public | `/login`, `/api/auth/*` |
+| Public | `/login` |
 
 Login client should honor `next` (safe same-origin path only) after successful sign-in.
 
@@ -82,8 +80,8 @@ Defined in `ROLE_PERMISSIONS`:
 
 | Role | Permissions |
 |------|-------------|
-| `ADMIN` | `*:read` + `*:write` for users, departments, locations |
-| `USER` | `*:read` only |
+| `ADMIN` | `*:read` + `*:write` for users, departments, locations; plus `logging:read` |
+| `USER` | `*:read` for users, departments, locations (no logging) |
 
 `Actions` catalog entries point at those strings (e.g. `Actions.users.write.permission === "users:write"`).
 
@@ -115,7 +113,7 @@ Route groups:
 
 ## Login channels
 
-Prefer `loginAction` / `logoutAction` + `useAuth`. `/api/auth/login` and `/api/auth/me` support the cookie/API path used as a fallback inside `AuthProvider` — do not add a third auth stack.
+Auth is **server actions only**: `loginAction` / `logoutAction` / `getMeAction` via `useAuth`. Do not add REST `/api/auth/*` or axios session clients.
 
 ---
 

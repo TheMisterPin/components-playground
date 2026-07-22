@@ -34,13 +34,23 @@ ERP UI boilerplate. Prefer existing shared systems over one-off patterns. Human 
 - **Server actions** always return `ActionResult<T>` via `withErrorBoundary`. Never throw across the wire. Known failures: `throw new AppError({ kind, code, message })`.
 - **Client actions** use only `useError().run()` — no try/catch UI in feature components. Map Zod field errors with `applyServerErrors(form, fe)`.
 - **RBAC**: server `await authorize(Actions.<feature>.read|write)`; client `can(me.role, Actions.<feature>.write)`. Matrix + catalog in `permissions.ts`. Never import `session.ts` from client.
+- **Auth**: jose cookie sessions + `loginAction` / `logoutAction` / `getMeAction` only. Do not add REST `/api/auth/*` or axios session clients.
 - **Forms**: FieldDef arrays + thin `*Form` wrappers around `DynamicForm`. `onSubmit(values, form)`. Shared validators from `src/lib/schemas/`.
 - **Modals**: `confirm` / `notify` / `openModal({ type: "form" })`. Transient feedback → toast, not `notify`. Modal package must not import form types.
-- **Tables**: `DynamicTable` + `toXTableRow` + `toolbarActions` / `rowActions` (not action cells in `format`).
+- **Tables**: `DynamicTable` + `toXTableRow` + `toolbarActions` / `rowActions` (not action cells in `format`). Client-side search/filter/sort/pagination only — do not invent server `page`/`cursor` list APIs unless building that system deliberately.
+- **List UI only**: verticals are list + modal CRUD. Do not add `[id]` detail routes unless the task asks for them.
 - **Layout**: Error Boundary wraps content only inside `AppShell` — leave sidebar/header outside. Providers in `AppProviders` (Modal → Auth → Error → ModalRoot).
 - **Import hygiene**: client may import `@/features/errors` (barrel). Never import `@/features/errors/server` from client code. Same for `@/features/logging` vs `@/features/logging/server`.
 - **Audit trail**: server `logActivity({ userId, activity, activityData? })` — never raw `prisma.userActivity.create`.
 - Named exports; strict TypeScript; no `any` on public APIs.
+
+## Do not invent
+
+- Parallel form / modal / error / auth stacks
+- Detail/show pages or orphan `getX(id)` actions without a route that uses them
+- Server-paginated list endpoints “for scale” by default
+- Global sidebar search or theme providers unless productizing them
+- REST auth routes alongside server actions
 
 ## Canonical snippets
 
@@ -81,8 +91,9 @@ if (data) toast.success("Saved")
 4. `components/forms/*-form-fields.ts` + thin `*Form`
 5. `components/tables/*-table-columns.tsx` + `toXTableRow`
 6. `actions/*-actions.ts` — `"use server"` + `withErrorBoundary` + `authorize` + soft-delete (`deletedAt`)
-7. `components/pages/*list-page-component.tsx` — table + modal CRUD + `can(...)`
-8. Thin route under `src/app/(app)/…/page.tsx` + entry in `src/lib/navigation.ts`
-9. Update `.docs` / rules only when conventions change
+7. Call `logActivity` from privileged mutations when an audit event is warranted (extend Prisma `Activity` enum first if needed)
+8. `components/pages/*list-page-component.tsx` — table + modal CRUD + `can(...)`
+9. Thin route under `src/app/(app)/…/page.tsx` + entry in `src/lib/navigation.ts`
+10. Update `.docs` / rules only when conventions change
 
 Auth uses jose cookie sessions (`src/features/auth/utils.ts`) + Prisma users. Guards live in `src/features/auth/session.ts` and throw `AppError` with stable kinds/codes so the client channel table stays stable.

@@ -5,9 +5,7 @@ import { decrypt, SESSION_COOKIE, updateSession } from "./features/auth/utils"
 const PUBLIC_PATHS = new Set(["/login"])
 
 function isPublicPath(pathname: string): boolean {
-  if (PUBLIC_PATHS.has(pathname)) return true
-  if (pathname.startsWith("/api/auth/")) return true
-  return false
+  return PUBLIC_PATHS.has(pathname)
 }
 
 export async function middleware(request: NextRequest) {

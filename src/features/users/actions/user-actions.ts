@@ -105,24 +105,6 @@ export async function listUsers(): Promise<ActionResult<User[]>> {
   })
 }
 
-export async function getUser(id: string): Promise<ActionResult<User>> {
-  return withErrorBoundary(async () => {
-    await authorize(Actions.users.read)
-    const row = await prisma.user.findFirst({
-      where: { id, deletedAt: null },
-      include: userInclude,
-    })
-    if (!row) {
-      throw new AppError({
-        kind: "not_found",
-        code: "USER_NOT_FOUND",
-        message: "That user could not be found.",
-      })
-    }
-    return toPublicUser(row)
-  })
-}
-
 export async function createUser(
   input: unknown,
 ): Promise<ActionResult<User>> {

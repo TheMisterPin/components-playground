@@ -62,24 +62,6 @@ export async function listLocations(): Promise<ActionResult<Location[]>> {
   })
 }
 
-export async function getLocation(id: string): Promise<ActionResult<Location>> {
-  return withErrorBoundary(async () => {
-    await authorize(Actions.locations.read)
-    const row = await prisma.location.findFirst({
-      where: { id, deletedAt: null },
-      include: { manager: { select: { fullName: true } } },
-    })
-    if (!row) {
-      throw new AppError({
-        kind: "not_found",
-        code: "LOCATION_NOT_FOUND",
-        message: "That location could not be found.",
-      })
-    }
-    return toPublicLocation(row)
-  })
-}
-
 export async function createLocation(
   input: unknown,
 ): Promise<ActionResult<Location>> {
