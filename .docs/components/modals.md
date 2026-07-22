@@ -31,7 +31,7 @@ src/components/shared/modals/
   index.ts              named re-exports
 ```
 
-`ModalProvider` wraps the app in `src/components/shared/layout/app-shell.tsx`.
+`ModalProvider` wraps the app in `src/components/shared/layout/app-providers.tsx` (`ModalRoot` mounts inside `ErrorProvider` so form modals can use `useError`).
 
 ---
 

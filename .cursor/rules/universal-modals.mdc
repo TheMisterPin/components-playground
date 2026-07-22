@@ -16,7 +16,7 @@ Use the shared stack-based modal system via `useModal()`. Do not build one-off D
 | Provider / reducer | `src/components/shared/modals/modal-context.tsx` |
 | Public hook | `src/components/shared/modals/use-modal.ts` |
 | Renderers + dirty guard | `src/components/shared/modals/modal-root.tsx` |
-| App mount | `ModalProvider` in `src/components/shared/layout/app-shell.tsx` |
+| App mount | `ModalProvider` + `ModalRoot` in `src/components/shared/layout/app-providers.tsx` |
 
 ## Choosing an API
 

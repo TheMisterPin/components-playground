@@ -40,7 +40,7 @@ src/lib/schemas/<model>.ts   Shared zod used by FieldDefs + server parse
 src/components/shared/forms/lib/apply-server-errors.ts
 ```
 
-Mounted in `AppShell`: content-only `ErrorBoundary` → `ErrorProvider` → `{children}`; Sonner `<Toaster />` beside the modal stack.
+Mounted in `AppProviders`: `ModalProvider` → `AuthProvider` → `ErrorProvider` → `{children}` + `ModalRoot` + Sonner. `AppShell` keeps a content-only `ErrorBoundary` so page crashes leave the sidebar usable.
 
 ---
 
@@ -204,7 +204,7 @@ AppShell
     Toaster (sonner)
 ```
 
-A crash in one page leaves navigation alive. `useError` needs both `ModalProvider` (ancestor) and `ErrorProvider` (content).
+A crash in one page leaves navigation alive. `useError` needs both `ModalProvider` and `ErrorProvider` as ancestors (including for form modals rendered by `ModalRoot`).
 
 ---
 

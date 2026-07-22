@@ -1,4 +1,4 @@
-import { ErrorBoundary, ErrorProvider } from "@/features/errors"
+import { ErrorBoundary } from "@/features/errors"
 
 /** Minimal chrome for unauthenticated routes (login). */
 export default function AuthLayout({
@@ -8,9 +8,7 @@ export default function AuthLayout({
 }>) {
   return (
     <div className="flex h-svh min-h-0 flex-col overflow-y-auto bg-background">
-      <ErrorBoundary>
-        <ErrorProvider>{children}</ErrorProvider>
-      </ErrorBoundary>
+      <ErrorBoundary>{children}</ErrorBoundary>
     </div>
   )
 }

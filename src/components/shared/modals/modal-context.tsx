@@ -9,7 +9,6 @@ import {
   type ReactNode,
 } from "react"
 
-import { ModalRoot } from "@/components/shared/modals/modal-root"
 import type {
   ModalConfig,
   ModalContextValue,
@@ -95,7 +94,6 @@ export function ModalProvider({ children }: { children: ReactNode }) {
   return (
     <ModalContext.Provider value={value}>
       {children}
-      <ModalRoot />
     </ModalContext.Provider>
   )
 }

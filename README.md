@@ -37,7 +37,7 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ### Layout
 
-`AppShell` (`src/components/shared/layout/app-shell.tsx`) provides sidebar + header for authenticated routes. Root `AppProviders` mounts `ModalProvider`, `AuthProvider`, and Sonner. Login lives under `(auth)` without the sidebar.
+`AppShell` (`src/components/shared/layout/app-shell.tsx`) provides sidebar + header for authenticated routes. Root `AppProviders` mounts `ModalProvider`, `AuthProvider`, `ErrorProvider`, `ModalRoot`, and Sonner. Login lives under `(auth)` without the sidebar.
 
 ### Users vertical (reference)
 
