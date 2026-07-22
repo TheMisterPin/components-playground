@@ -23,7 +23,10 @@ export const navigationItems: NavigationItem[] = [
     title: "Team",
     icon: Users,
     url: "/team",
-    items: [{ title: "Members", url: "/team/members" }],
+    items: [
+      { title: "Members", url: "/team/members" },
+      { title: "Activity", url: "/team/activity" },
+    ],
   },
   {
     title: "Organization",

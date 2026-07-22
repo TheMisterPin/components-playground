@@ -27,6 +27,7 @@ ERP UI boilerplate. Prefer existing shared systems over one-off patterns. Human 
 | Auth / RBAC | `permissions.ts` (`Actions`, `can`) + `session.ts` (`authorize`) | `.docs/components/auth.md` | `auth-rbac.mdc` |
 | DynamicTable | `@/components/shared/table/dynamic-table` | `.docs/components/tables.md` | `dynamic-table.mdc` |
 | List-page CRUD | feature `*list-page-component.tsx` | `.docs/components/list-pages.md` | `list-page-crud.mdc` |
+| Logging / audit | `@/features/logging/server` → `logActivity` | `.docs/components/logging.md` | `logging.mdc` |
 
 ## Hard conventions
 
@@ -37,7 +38,8 @@ ERP UI boilerplate. Prefer existing shared systems over one-off patterns. Human 
 - **Modals**: `confirm` / `notify` / `openModal({ type: "form" })`. Transient feedback → toast, not `notify`. Modal package must not import form types.
 - **Tables**: `DynamicTable` + `toXTableRow` + `toolbarActions` / `rowActions` (not action cells in `format`).
 - **Layout**: Error Boundary wraps content only inside `AppShell` — leave sidebar/header outside. Providers in `AppProviders` (Modal → Auth → Error → ModalRoot).
-- **Import hygiene**: client may import `@/features/errors` (barrel). Never import `@/features/errors/server` from client code.
+- **Import hygiene**: client may import `@/features/errors` (barrel). Never import `@/features/errors/server` from client code. Same for `@/features/logging` vs `@/features/logging/server`.
+- **Audit trail**: server `logActivity({ userId, activity, activityData? })` — never raw `prisma.userActivity.create`.
 - Named exports; strict TypeScript; no `any` on public APIs.
 
 ## Canonical snippets
@@ -64,9 +66,10 @@ if (data) toast.success("Saved")
 
 | Route | What it proves |
 |-------|----------------|
-| `/` | Home landing — links to the three list CRUD demos |
+| `/` | Home landing — links to list CRUD + activity demos |
 | `/login` | Auth gate entry + `SESSION_EXPIRED` acknowledge target |
 | `/team/members` | List-page CRUD (forms + modals + `run()`) |
+| `/team/activity` | Audit trail list (`logActivity` + ADMIN `logging:read`) |
 | `/organization/departments` | Org vertical + list CRUD |
 | `/organization/locations` | Org vertical + manager select + list CRUD |
 

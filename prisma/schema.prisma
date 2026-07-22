@@ -45,6 +45,7 @@ model UserActivity {
   activityData Json?
 
   @@index([userId])
+  @@index([timestamp])
 }
 
 model Department {

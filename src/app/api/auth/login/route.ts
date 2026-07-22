@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server"
 
-import { prisma } from "@/lib/db"
 import { authenticateUser } from "@/features/auth/password"
 import { createSession } from "@/features/auth/utils"
 import { toMe } from "@/features/auth/types"
 import { AppError } from "@/features/errors/server"
+import { logActivity } from "@/features/logging/server"
 
 export async function POST(request: Request) {
   try {
@@ -25,11 +25,9 @@ export async function POST(request: Request) {
     const user = await authenticateUser(email, password)
     await createSession(user)
 
-    await prisma.userActivity.create({
-      data: {
-        userId: user.id,
-        activity: "LOGIN",
-      },
+    await logActivity({
+      userId: user.id,
+      activity: "LOGIN",
     })
 
     return NextResponse.json(toMe(user))

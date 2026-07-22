@@ -8,6 +8,7 @@ export type Permission =
   | "departments:write"
   | "locations:read"
   | "locations:write"
+  | "logging:read"
 
 /** Typed action object — maps a stable id to a matrix permission. */
 export type AppAction = {
@@ -24,6 +25,7 @@ export const ROLE_PERMISSIONS: Record<Role, readonly Permission[]> = {
     "departments:write",
     "locations:read",
     "locations:write",
+    "logging:read",
   ],
   USER: ["users:read", "departments:read", "locations:read"],
 }
@@ -41,6 +43,9 @@ export const Actions = {
   locations: {
     read: { id: "locations.read", permission: "locations:read" },
     write: { id: "locations.write", permission: "locations:write" },
+  },
+  logging: {
+    read: { id: "logging.read", permission: "logging:read" },
   },
 } as const satisfies Record<string, Record<string, AppAction>>
 

@@ -7,6 +7,11 @@ const demos = [
     description: "List-page CRUD — forms, modals, RBAC, and useError().run()",
   },
   {
+    href: "/team/activity",
+    title: "Activity",
+    description: "Audit trail — logActivity helper + read-only ADMIN list",
+  },
+  {
     href: "/organization/departments",
     title: "Departments",
     description: "Organization vertical with the same list CRUD pattern",

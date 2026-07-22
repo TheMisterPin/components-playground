@@ -1,17 +1,18 @@
 "use server"
 
+import { Actions } from "@/features/auth/permissions"
+import { authorize } from "@/features/auth/session"
+import { hashPassword } from "@/features/auth/password"
+import type { ActionResult } from "@/features/errors/dto"
+import { AppError, withErrorBoundary } from "@/features/errors/server"
+import { logActivity } from "@/features/logging/server"
+import type { User } from "@/features/users/types/user-types"
 import { Prisma } from "@/generated/prisma/client"
 import { prisma } from "@/lib/db"
 import {
   createUserSchema,
   updateUserSchema,
 } from "@/lib/schemas/user"
-import type { ActionResult } from "@/features/errors/dto"
-import { AppError, withErrorBoundary } from "@/features/errors/server"
-import { hashPassword } from "@/features/auth/password"
-import { Actions } from "@/features/auth/permissions"
-import { authorize } from "@/features/auth/session"
-import type { User } from "@/features/users/types/user-types"
 
 type UserRow = {
   id: string
@@ -154,11 +155,9 @@ export async function createUser(
         include: userInclude,
       })
 
-      await prisma.userActivity.create({
-        data: {
-          userId: row.id,
-          activity: "REGISTER",
-        },
+      await logActivity({
+        userId: row.id,
+        activity: "REGISTER",
       })
 
       return toPublicUser(row)

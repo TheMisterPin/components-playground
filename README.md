@@ -58,6 +58,7 @@ Seeded by `pnpm db:seed`:
 | **Auth / RBAC** — jose session, middleware, `Actions` / `authorize` / `can` | `/login`, list write gates | [`.docs/components/auth.md`](.docs/components/auth.md) | [`.cursor/rules/auth-rbac.mdc`](.cursor/rules/auth-rbac.mdc) |
 | **DynamicTable** — columns, toolbar/row actions | Members / org lists | [`.docs/components/tables.md`](.docs/components/tables.md) | [`.cursor/rules/dynamic-table.mdc`](.cursor/rules/dynamic-table.mdc) |
 | **List-page CRUD** — table + modals + RBAC | `/team/members`, org pages | [`.docs/components/list-pages.md`](.docs/components/list-pages.md) | [`.cursor/rules/list-page-crud.mdc`](.cursor/rules/list-page-crud.mdc) |
+| **Logging / audit** — `logActivity` + ADMIN activity list | `/team/activity`, login/logout | [`.docs/components/logging.md`](.docs/components/logging.md) | [`.cursor/rules/logging.mdc`](.cursor/rules/logging.mdc) |
 
 ### Layout
 
@@ -96,6 +97,7 @@ src/
     users/                  Reference vertical (members)
     departments/            Org vertical
     locations/              Org vertical
+    logging/                Audit trail (logActivity + activity list)
   lib/
     schemas/                Shared zod (FieldDefs + server)
     navigation.ts           Sidebar nav

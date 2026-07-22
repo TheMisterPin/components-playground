@@ -10,6 +10,7 @@ import {
   getSession,
 } from "@/features/auth/utils"
 import { toMe, type Me } from "@/features/auth/types"
+import { logActivity } from "@/features/logging/server"
 
 export async function loginAction(
   input: unknown,
@@ -33,11 +34,9 @@ export async function loginAction(
     const user = await authenticateUser(email, password)
     await createSession(user)
 
-    await prisma.userActivity.create({
-      data: {
-        userId: user.id,
-        activity: "LOGIN",
-      },
+    await logActivity({
+      userId: user.id,
+      activity: "LOGIN",
     })
 
     return toMe(user)
@@ -48,11 +47,9 @@ export async function logoutAction(): Promise<ActionResult<true>> {
   return withErrorBoundary(async () => {
     const session = await getSession()
     if (session) {
-      await prisma.userActivity.create({
-        data: {
-          userId: session.userId,
-          activity: "LOGOUT",
-        },
+      await logActivity({
+        userId: session.userId,
+        activity: "LOGOUT",
       })
     }
     await clearSession()
