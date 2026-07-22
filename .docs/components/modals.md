@@ -2,7 +2,7 @@
 
 Stack-based, context-managed modals built on **shadcn/ui** `Dialog` and `AlertDialog`. Call `useModal()` from anywhere under `ModalProvider`; the system pushes entries onto a stack and renders every open modal (so lower ones stay mounted when a confirm stacks on top).
 
-Live demo: [`/modals`](/modals) (notify, confirm, form + dirty guard).
+Live examples: list-page create/edit/delete (e.g. `/team/members`).
 
 ---
 
@@ -29,8 +29,6 @@ src/components/shared/modals/
   use-modal.ts          public API (useModal)
   modal-root.tsx        stack → notification / confirm / form renderers
   index.ts              named re-exports
-
-src/app/modals/page.tsx   demo page
 ```
 
 `ModalProvider` wraps the app in `src/components/shared/layout/app-shell.tsx`.
@@ -110,6 +108,41 @@ formId = openModal({
 ```
 
 If the form is dirty and the user tries to close (ESC, overlay, X), a destructive confirm stacks on top: discard closes both; cancel closes only the warning.
+
+### 4. List-page CRUD (table + modals)
+
+Canonical pattern for feature list pages (`UserListPageComponent`, departments, locations):
+
+1. Pass `toolbarActions` (Create) and `rowActions` (Edit / Delete) into `DynamicTable`.
+2. Gate write UI with `hasPermission(me.role, "<feature>:write")` from `@/features/auth/permissions`.
+3. Create/Edit → `openModal({ type: "form", … })` with dirty bridge; submit via `useError().run()` + `applyServerErrors`; on success `toast.success`, `closeModal`, reload list.
+4. Delete → `confirm({ variant: "destructive" })` then `run(deleteX(id))` + toast + reload.
+
+```tsx
+let formId = ""
+formId = openModal({
+  type: "form",
+  title: "New member",
+  size: "lg",
+  component: (
+    <UserForm
+      onDirtyChange={(isDirty) => setDirty(formId, isDirty)}
+      onSubmit={async (values, form) => {
+        const data = await run(createUser(values), {
+          onFieldErrors: (fe) => applyServerErrors(form, fe),
+        })
+        if (data) {
+          toast.success("Member created")
+          closeModal(formId)
+          await load()
+        }
+      }}
+    />
+  ),
+})
+```
+
+Reference implementations: `src/features/users|departments|locations/components/pages/*list-page-component.tsx`.
 
 ---
 
@@ -224,6 +257,6 @@ They meet at the call site (feature page or thin wrapper), not inside `src/compo
 | `src/components/shared/modals/use-modal.ts` | Public hook |
 | `src/components/shared/modals/modal-context.tsx` | Provider + reducer |
 | `src/components/shared/modals/modal-root.tsx` | Renderers + dirty guard |
-| `src/components/shared/layout/app-shell.tsx` | `ModalProvider` mount |
-| `src/app/modals/page.tsx` | Demo (notify / confirm / form) |
+| `src/components/shared/layout/app-providers.tsx` | `ModalProvider` mount |
+| `src/features/users/components/pages/userlist-page-component.tsx` | List-page create/edit/delete |
 | [error-handling.md](./error-handling.md) | Routes `auth` / `permission` DTOs into `notify` |

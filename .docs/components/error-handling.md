@@ -2,7 +2,7 @@
 
 A single pipeline for server-action failures and client presentation. Every vertical uses the same contract, boundary, and `useError().run()` call shape — no bespoke try/catch or ad-hoc error UI.
 
-Live demo: [`/forms`](/forms) (create/edit via `run()`, server-validation bypass, channel force buttons). Session stub: [`/login`](/login).
+Live demo: use list-page create/edit modals (e.g. `/team/members`). Session expire → `/login`.
 
 ---
 
@@ -34,7 +34,7 @@ src/features/errors/
   use-error.ts           handle, run, DEFAULT_ERROR_CHANNELS
   index.ts               Client-safe barrel (excludes server.ts)
 
-src/lib/auth/mock.ts     Stub session / requireSession / requirePermission
+src/features/auth/session.ts   requireSession / requirePermission (cookie JWT + Role)
 src/lib/schemas/<model>.ts   Shared zod used by FieldDefs + server parse
 
 src/components/shared/forms/lib/apply-server-errors.ts
@@ -102,7 +102,7 @@ await run(action, { overrides: { conflict: "modal" } })
 
 import type { ActionResult } from "@/features/errors/dto"
 import { AppError, withErrorBoundary } from "@/features/errors/server"
-import { requirePermission, requireSession } from "@/lib/auth/mock"
+import { requirePermission, requireSession } from "@/features/auth/session"
 import { userSchema } from "@/lib/schemas/user"
 import type { User } from "@/features/users/types/user-types"
 
@@ -208,28 +208,27 @@ A crash in one page leaves navigation alive. `useError` needs both `ModalProvide
 
 ---
 
-## Auth stubs
+## Auth session
 
-`src/lib/auth/mock.ts` is playground-only until a real backend lands:
+`src/features/auth/session.ts` + jose cookies in `src/features/auth/utils.ts`:
 
-- `getSession` / `setMockSession` / `clearMockSession`
+- `getSession` / `createSession` / `clearSession` (cookie JWT with `userId`)
 - `requireSession()` → `AppError` `SESSION_EXPIRED`
-- `requirePermission(perm)` → `AppError` `FORBIDDEN`
+- `requirePermission(perm)` → `AppError` `FORBIDDEN` (`ADMIN` = read+write, `USER` = read)
 
-Replace that module with real session/RBAC; keep throwing `AppError` with the same kinds/codes so the client channel table stays stable.
+Keep throwing `AppError` with the same kinds/codes so the client channel table stays stable.
 
 ---
 
-## Demo checklist (`/forms`)
+## Checklist (list CRUD)
 
 | Control | Expected |
 |---------|----------|
-| Server validation (client bypassed) form | Inline field errors from server Zod |
-| Permission modal | Blocking `notify` |
-| Session expired → login | Modal; OK → `/login` |
+| Create/edit form field errors | Inline via `applyServerErrors` |
+| Permission denied on write | Blocking `notify` |
+| Session expired | Modal; OK → `/login` |
 | Conflict / not found / internal | Error toast; internal also `console.error` on server |
 | Rejected promise → boundary | Content fallback; sidebar still works |
-| Clear / revoke / restore session | Mock auth helpers for real action paths |
 
 `skipClientValidation` on `DynamicForm` / `UserForm` is **demo/testing only**.
 
@@ -254,4 +253,4 @@ Replace that module with real session/RBAC; keep throwing `AppError` with the sa
 | `.docs/components/forms.md` | DynamicForm + `applyServerErrors` |
 | `.docs/components/modals.md` | `notify` for blocking errors |
 | `src/features/users/actions/user-actions.ts` | Reference server actions |
-| `src/app/forms/page.tsx` | End-to-end demos |
+| `src/features/users/components/pages/userlist-page-component.tsx` | List-page CRUD |

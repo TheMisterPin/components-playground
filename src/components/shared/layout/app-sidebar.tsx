@@ -6,10 +6,12 @@ import { usePathname } from "next/navigation"
 import { ChevronRight } from "lucide-react"
 
 import { SearchForm } from "./search-form"
+import { SidebarUser } from "./sidebar-user"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarHeader,
   SidebarMenu,
@@ -19,6 +21,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   SidebarRail,
+  SidebarSeparator,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { isNavItemActive, navigationItems } from "@/lib/navigation"
@@ -99,6 +102,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter className="border-t border-sidebar-border">
+        <SidebarSeparator className="mx-0" />
+        <SidebarUser />
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   )

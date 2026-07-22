@@ -1,95 +1,139 @@
 import type { FieldDef } from "@/components/shared/forms/types"
-import type { User } from "@/features/users/types/user-types"
+import type { UserFormValues } from "@/features/users/types/user-types"
 import {
-  userBioSchema,
-  userCreatedAtSchema,
-  userDepartmentSchema,
+  userDepartmentIdSchema,
   userEmailSchema,
-  userNameSchema,
-  userNotifySchema,
-  userPhoneSchema,
+  userFirstNameSchema,
+  userIsActiveSchema,
+  userLastNameSchema,
+  userLocationIdSchema,
+  userPasswordOptionalSchema,
+  userPasswordSchema,
+  userPictureUrlSchema,
   userRoleSchema,
-  userUpdatedAtSchema,
 } from "@/lib/schemas/user"
 
-export const userFormFields: FieldDef<User>[] = [
-  {
-    name: "email",
-    type: "text",
-    label: "Email",
-    placeholder: "you@example.com",
-    validation: userEmailSchema,
-    canEdit: false,
-  },
-  {
-    name: "name",
-    type: "text",
-    label: "Name",
-    placeholder: "Full name",
-    validation: userNameSchema,
-  },
-  {
-    name: "role",
-    type: "select",
-    label: "Role",
-    placeholder: "Select a role",
-    validation: userRoleSchema,
-    options: [
-      { label: "Admin", value: "admin" },
-      { label: "Editor", value: "editor" },
-      { label: "Viewer", value: "viewer" },
-    ],
-  },
-  {
-    name: "department",
-    type: "select",
-    label: "Department",
-    placeholder: "Select a department",
-    validation: userDepartmentSchema,
-    options: [
-      { label: "Engineering", value: "engineering" },
-      { label: "Design", value: "design" },
-      { label: "Product", value: "product" },
-      { label: "Operations", value: "operations" },
-    ],
-    visibleWhen: (values) => values.role !== "viewer",
-  },
-  {
-    name: "bio",
-    type: "textarea",
-    label: "Bio",
-    placeholder: "A short bio",
-    validation: userBioSchema,
-    colSpan: 2,
-  },
-  {
-    name: "notify",
-    type: "switch",
-    label: "Email notifications",
-    description: "Receive updates about account activity",
-    validation: userNotifySchema,
-    defaultValue: false,
-  },
-  {
-    name: "phone",
-    type: "text",
-    label: "Phone",
-    placeholder: "+1 555 000 0000",
-    validation: userPhoneSchema,
-    requiredWhen: (values) => values.notify === true,
-  },
-  {
-    name: "createdAt",
-    type: "date",
-    label: "Created at",
-    validation: userCreatedAtSchema,
-    hide: true,
-  },
-  {
-    name: "updatedAt",
-    type: "date",
-    label: "Updated at",
-    validation: userUpdatedAtSchema,
-    hide: true,
-  },
-]
+export type SelectOption = { label: string; value: string }
+
+const noneOption: SelectOption = { label: "None", value: "" }
+
+type BuildUserFormFieldsOptions = {
+  departmentOptions?: SelectOption[]
+  locationOptions?: SelectOption[]
+}
+
+function buildBaseFields(
+  departmentOptions: SelectOption[],
+  locationOptions: SelectOption[],
+): FieldDef<UserFormValues>[] {
+  return [
+    {
+      name: "email",
+      type: "text",
+      label: "Email",
+      placeholder: "you@example.com",
+      validation: userEmailSchema,
+      canEdit: false,
+    },
+    {
+      name: "firstName",
+      type: "text",
+      label: "First name",
+      placeholder: "Ada",
+      validation: userFirstNameSchema,
+    },
+    {
+      name: "lastName",
+      type: "text",
+      label: "Last name",
+      placeholder: "Lovelace",
+      validation: userLastNameSchema,
+    },
+    {
+      name: "role",
+      type: "select",
+      label: "Role",
+      placeholder: "Select a role",
+      validation: userRoleSchema,
+      options: [
+        { label: "Admin", value: "ADMIN" },
+        { label: "User", value: "USER" },
+      ],
+    },
+    {
+      name: "departmentId",
+      type: "select",
+      label: "Department",
+      placeholder: "Select a department",
+      validation: userDepartmentIdSchema,
+      options: [noneOption, ...departmentOptions],
+    },
+    {
+      name: "locationId",
+      type: "select",
+      label: "Location",
+      placeholder: "Select a location",
+      validation: userLocationIdSchema,
+      options: [noneOption, ...locationOptions],
+    },
+    {
+      name: "pictureUrl",
+      type: "text",
+      label: "Picture URL",
+      placeholder: "https://…",
+      validation: userPictureUrlSchema,
+    },
+    {
+      name: "isActive",
+      type: "switch",
+      label: "Active",
+      validation: userIsActiveSchema,
+      defaultValue: true,
+    },
+  ]
+}
+
+const createPasswordField: FieldDef<UserFormValues> = {
+  name: "password",
+  type: "text",
+  label: "Password",
+  placeholder: "Min. 8 characters",
+  validation: userPasswordSchema,
+}
+
+const editPasswordField: FieldDef<UserFormValues> = {
+  name: "password",
+  type: "text",
+  label: "New password",
+  placeholder: "Leave blank to keep current",
+  validation: userPasswordOptionalSchema,
+}
+
+export function buildCreateUserFormFields(
+  options: BuildUserFormFieldsOptions = {},
+): FieldDef<UserFormValues>[] {
+  const base = buildBaseFields(
+    options.departmentOptions ?? [],
+    options.locationOptions ?? [],
+  )
+  return [...base.slice(0, 4), createPasswordField, ...base.slice(4)]
+}
+
+export function buildEditUserFormFields(
+  options: BuildUserFormFieldsOptions = {},
+): FieldDef<UserFormValues>[] {
+  const base = buildBaseFields(
+    options.departmentOptions ?? [],
+    options.locationOptions ?? [],
+  )
+  return [...base.slice(0, 4), editPasswordField, ...base.slice(4)]
+}
+
+/** @deprecated Prefer buildCreateUserFormFields via UserForm */
+export const createUserFormFields = buildCreateUserFormFields()
+
+/** @deprecated Prefer buildEditUserFormFields via UserForm */
+export const editUserFormFields = buildEditUserFormFields()
+
+/** @deprecated Prefer createUserFormFields / editUserFormFields via UserForm */
+export const userFormFields = createUserFormFields

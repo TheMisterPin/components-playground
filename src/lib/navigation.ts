@@ -1,10 +1,9 @@
 import type { LucideIcon } from "lucide-react"
 import {
-  ClipboardList,
+  Building2,
   Home,
   LayoutDashboard,
   Settings,
-  SquareStack,
   Users,
 } from "lucide-react"
 
@@ -37,16 +36,6 @@ export const navigationItems: NavigationItem[] = [
     url: "/settings",
   },
   {
-    title: "Forms",
-    icon: ClipboardList,
-    url: "/forms",
-  },
-  {
-    title: "Modals",
-    icon: SquareStack,
-    url: "/modals",
-  },
-  {
     title: "Team",
     icon: Users,
     url: "/team",
@@ -54,6 +43,15 @@ export const navigationItems: NavigationItem[] = [
       { title: "Members", url: "/team/members" },
       { title: "Permissions", url: "/team/permissions" },
       { title: "Invitations", url: "/team/invitations" },
+    ],
+  },
+  {
+    title: "Organization",
+    icon: Building2,
+    url: "/organization",
+    items: [
+      { title: "Departments", url: "/organization/departments" },
+      { title: "Locations", url: "/organization/locations" },
     ],
   },
 ]

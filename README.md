@@ -1,6 +1,6 @@
 # Components Playground
 
-Next.js (App Router) ERP boilerplate / component playground. Shared UI systems live under `src/components/shared`; feature verticals under `src/features`. Auth and persistence are stubbed for now — real backends plug into the same contracts.
+Next.js (App Router) ERP boilerplate / component playground. Shared UI systems live under `src/components/shared`; feature verticals under `src/features`. Auth uses jose cookie sessions + Prisma; middleware requires login for all app routes.
 
 ## Stack
 
@@ -28,22 +28,23 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## What’s implemented
 
-| System | Demo | Docs | Cursor rule |
-|--------|------|------|-------------|
-| **Dynamic forms** — FieldDef registry, layouts, conditional fields | [`/forms`](http://localhost:3000/forms) | [`.docs/components/forms.md`](.docs/components/forms.md) | [`.cursor/rules/dynamic-forms.mdc`](.cursor/rules/dynamic-forms.mdc) |
-| **Universal modals** — stack of notify / confirm / form | [`/modals`](http://localhost:3000/modals) | [`.docs/components/modals.md`](.docs/components/modals.md) | [`.cursor/rules/universal-modals.mdc`](.cursor/rules/universal-modals.mdc) |
-| **Error handling** — `ActionResult`, `withErrorBoundary`, `useError().run()` | [`/forms`](http://localhost:3000/forms) (error demos), [`/login`](http://localhost:3000/login) | [`.docs/components/error-handling.md`](.docs/components/error-handling.md) | [`.cursor/rules/error-handling.mdc`](.cursor/rules/error-handling.mdc) |
+| System | Where to see it | Docs | Cursor rule |
+|--------|-----------------|------|-------------|
+| **Dynamic forms** — FieldDef registry, layouts, conditional fields | Feature forms (e.g. member create/edit modal) | [`.docs/components/forms.md`](.docs/components/forms.md) | [`.cursor/rules/dynamic-forms.mdc`](.cursor/rules/dynamic-forms.mdc) |
+| **Universal modals** — stack of notify / confirm / form | List-page create/edit/delete | [`.docs/components/modals.md`](.docs/components/modals.md) | [`.cursor/rules/universal-modals.mdc`](.cursor/rules/universal-modals.mdc) |
+| **Error handling** — `ActionResult`, `withErrorBoundary`, `useError().run()` | Server actions + list CRUD | [`.docs/components/error-handling.md`](.docs/components/error-handling.md) | [`.cursor/rules/error-handling.mdc`](.cursor/rules/error-handling.mdc) |
+| **Auth** — jose cookie session + middleware gate | `/login`, sidebar user/logout | — | — |
 
 ### Layout
 
-`AppShell` (`src/components/shared/layout/app-shell.tsx`) provides sidebar + header, `ModalProvider`, Sonner toaster, and a content-scoped `ErrorBoundary` / `ErrorProvider` so page crashes leave navigation usable.
+`AppShell` (`src/components/shared/layout/app-shell.tsx`) provides sidebar + header for authenticated routes. Root `AppProviders` mounts `ModalProvider`, `AuthProvider`, and Sonner. Login lives under `(auth)` without the sidebar.
 
 ### Users vertical (reference)
 
 - Forms: `src/features/users/components/forms/`
 - Shared schema: `src/lib/schemas/user.ts`
-- Stub server actions: `src/features/users/actions/user-actions.ts`
-- Mock session / RBAC: `src/lib/auth/mock.ts`
+- Server actions: `src/features/users/actions/user-actions.ts`
+- Session / RBAC: `src/features/auth/session.ts`
 
 Canonical client submit:
 
@@ -91,4 +92,4 @@ Agent instructions: [`AGENTS.md`](AGENTS.md) (also referenced by `CLAUDE.md`).
 
 - Prefer **pnpm**.
 - This Next.js version may differ from training data — see `AGENTS.md` and `node_modules/next/dist/docs/` before inventing APIs.
-- Mock auth is intentional until a real backend replaces `src/lib/auth/mock.ts`; keep throwing `AppError` with the same kinds/codes so the client channel table stays stable.
+- Auth uses jose cookie sessions + Prisma; guards in `src/features/auth/session.ts` throw `AppError` with stable kinds/codes so the client channel table stays stable.

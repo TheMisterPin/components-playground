@@ -1,6 +1,6 @@
 ---
 description: Conventions for the stack-based modal system (useModal, confirm, notify, form dirty guard)
-globs: src/components/shared/modals/**/*,src/app/modals/**/*
+globs: src/components/shared/modals/**/*
 alwaysApply: false
 ---
 
@@ -54,6 +54,10 @@ formId = openModal({
 - Callers never invent `id` or pass `isDirty` in the config.
 - Dirty close is handled by the modal system (discard confirm stacks on top).
 - Successful submit closes via `closeModal(formId)` — no discard prompt.
+
+## List-page CRUD
+
+Wire Create/Edit/Delete on list pages via `DynamicTable` `toolbarActions` / `rowActions` + this modal API. Submit with `useError().run()` + `applyServerErrors`; success → toast + `closeModal` + reload. Delete → `confirm({ variant: "destructive" })`. Gate write UI with `hasPermission` from `@/features/auth/permissions`. See `.docs/components/modals.md` § List-page CRUD.
 
 ## Constraints
 

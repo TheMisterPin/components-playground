@@ -1,6 +1,6 @@
 ---
 description: Conventions for unified error handling (ActionResult, withErrorBoundary, useError.run, applyServerErrors)
-globs: src/features/errors/**/*,src/features/**/actions/**/*,src/lib/auth/**/*,src/lib/schemas/**/*,src/app/forms/**/*,src/app/login/**/*
+globs: src/features/errors/**/*,src/features/**/actions/**/*,src/lib/schemas/**/*,src/app/(auth)/login/**/*
 alwaysApply: false
 ---
 
@@ -19,7 +19,7 @@ Use the shared error pipeline. Do not invent parallel result types, try/catch UI
 | Client barrel | `src/features/errors` (never re-exports `server.ts`) |
 | Field-error helper | `src/components/shared/forms/lib/apply-server-errors.ts` |
 | Shared zod | `src/lib/schemas/<model>.ts` |
-| Mock auth (swap later) | `src/lib/auth/mock.ts` |
+| Session / RBAC | `src/features/auth/session.ts` |
 | App mount | `ErrorBoundary` + `ErrorProvider` around content in `app-shell.tsx` |
 
 ## Channel table (`DEFAULT_ERROR_CHANNELS`)

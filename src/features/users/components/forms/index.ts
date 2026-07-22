@@ -1,2 +1,8 @@
 export { UserForm } from "./user-form"
-export { userFormFields } from "./user-form-fields"
+export {
+  buildCreateUserFormFields,
+  buildEditUserFormFields,
+  createUserFormFields,
+  editUserFormFields,
+  userFormFields,
+} from "./user-form-fields"

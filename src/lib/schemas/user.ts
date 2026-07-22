@@ -7,48 +7,88 @@ export const userEmailSchema = z
   .min(1, "Required")
   .email("Enter a valid email")
 
-export const userNameSchema = z.string().min(1, "Required")
+export const userFirstNameSchema = z.string().min(1, "Required")
 
-export const userRoleSchema = z.enum(["admin", "editor", "viewer"], {
+export const userLastNameSchema = z.string().min(1, "Required")
+
+export const userRoleSchema = z.enum(["ADMIN", "USER"], {
   required_error: "Required",
 })
 
-export const userDepartmentSchema = z.string().optional()
+export const userPasswordSchema = z
+  .string()
+  .min(8, "Password must be at least 8 characters")
 
-export const userBioSchema = z.string().optional()
+export const userPasswordOptionalSchema = z
+  .string()
+  .refine(
+    (value) => value === "" || value.length >= 8,
+    "Password must be at least 8 characters",
+  )
+  .optional()
 
-export const userNotifySchema = z.boolean()
+/** Empty string or valid UUID. Coerce empty → null in actions. */
+export const userDepartmentIdSchema = z
+  .string()
+  .refine(
+    (value) => value === "" || z.string().uuid().safeParse(value).success,
+    "Invalid department id",
+  )
+  .optional()
 
-export const userPhoneSchema = z.string().optional()
+/** Empty string or valid UUID. Coerce empty → null in actions. */
+export const userLocationIdSchema = z
+  .string()
+  .refine(
+    (value) => value === "" || z.string().uuid().safeParse(value).success,
+    "Invalid location id",
+  )
+  .optional()
+
+export const userPictureUrlSchema = z
+  .string()
+  .refine(
+    (value) => value === "" || z.string().url().safeParse(value).success,
+    "Enter a valid URL",
+  )
+  .optional()
+
+export const userIsActiveSchema = z.boolean().optional()
 
 export const userCreatedAtSchema = z.date().optional()
 
 export const userUpdatedAtSchema = z.date().optional()
 
-/**
- * Full user payload schema for server actions.
- * Phone is required when notify is true (mirrors FieldDef requiredWhen).
- */
-export const userSchema = z
-  .object({
-    email: userEmailSchema,
-    name: userNameSchema,
-    role: userRoleSchema,
-    department: userDepartmentSchema,
-    bio: userBioSchema,
-    notify: userNotifySchema,
-    phone: userPhoneSchema,
-    createdAt: userCreatedAtSchema,
-    updatedAt: userUpdatedAtSchema,
-  })
-  .superRefine((data, ctx) => {
-    if (data.notify && (!data.phone || data.phone.trim() === "")) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Required",
-        path: ["phone"],
-      })
-    }
-  })
+/** Create user payload. */
+export const createUserSchema = z.object({
+  email: userEmailSchema,
+  firstName: userFirstNameSchema,
+  lastName: userLastNameSchema,
+  role: userRoleSchema,
+  password: userPasswordSchema,
+  departmentId: userDepartmentIdSchema,
+  locationId: userLocationIdSchema,
+  pictureUrl: userPictureUrlSchema,
+  isActive: userIsActiveSchema,
+})
 
-export type UserInput = z.infer<typeof userSchema>
+/** Update user payload — password optional. */
+export const updateUserSchema = z.object({
+  id: z.string().uuid("Invalid user id"),
+  email: userEmailSchema,
+  firstName: userFirstNameSchema,
+  lastName: userLastNameSchema,
+  role: userRoleSchema,
+  password: userPasswordOptionalSchema,
+  departmentId: userDepartmentIdSchema,
+  locationId: userLocationIdSchema,
+  pictureUrl: userPictureUrlSchema,
+  isActive: userIsActiveSchema,
+})
+
+/** @deprecated Use createUserSchema / updateUserSchema */
+export const userSchema = createUserSchema
+
+export type CreateUserInput = z.infer<typeof createUserSchema>
+export type UpdateUserInput = z.infer<typeof updateUserSchema>
+export type UserInput = CreateUserInput

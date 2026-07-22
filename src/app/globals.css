@@ -75,6 +75,20 @@
   --color-error-surface: var(--error-surface);
   --color-error-border: var(--error-border);
 
+  /* data table */
+  --color-table-toolbar: var(--table-toolbar);
+  --color-table-toolbar-foreground: var(--table-toolbar-foreground);
+  --color-table-toolbar-border: var(--table-toolbar-border);
+  --color-table-header: var(--table-header);
+  --color-table-header-foreground: var(--table-header-foreground);
+  --color-table-header-border: var(--table-header-border);
+  --color-table-row: var(--table-row);
+  --color-table-row-alt: var(--table-row-alt);
+  --color-table-row-hover: var(--table-row-hover);
+  --color-table-cell-foreground: var(--table-cell-foreground);
+  --color-table-border: var(--table-border);
+  --color-table-surface: var(--table-surface);
+
   /* radius scale (unchanged) */
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
@@ -166,6 +180,20 @@
   --sidebar-border: oklch(0.88 0.012 242);
   --sidebar-ring: oklch(0.48 0.07 240);
 
+  /* ---- data table ---- */
+  --table-toolbar: oklch(0.978 0.006 242 / 92%);
+  --table-toolbar-foreground: oklch(0.28 0.022 245);
+  --table-toolbar-border: oklch(0.88 0.012 242);
+  --table-header: oklch(0.94 0.01 242);
+  --table-header-foreground: oklch(0.34 0.025 245);
+  --table-header-border: oklch(0.86 0.014 242);
+  --table-row: oklch(0.978 0.005 242);
+  --table-row-alt: oklch(0.965 0.008 242);
+  --table-row-hover: oklch(0.945 0.014 240);
+  --table-cell-foreground: oklch(0.30 0.022 245);
+  --table-border: oklch(0.88 0.012 242);
+  --table-surface: oklch(0.978 0.006 242);
+
   /* ---- gradients ---- */
   --gradient-app: linear-gradient(180deg, oklch(0.97 0.008 242) 0%, oklch(0.95 0.012 245) 100%);
   --gradient-surface: linear-gradient(180deg, oklch(0.955 0.01 242) 0%, oklch(0.935 0.014 245) 100%);
@@ -239,6 +267,20 @@
   --sidebar-accent-foreground: oklch(0.88 0.01 240);
   --sidebar-border: oklch(0.88 0.02 240 / 14%);
   --sidebar-ring: oklch(0.68 0.07 235);
+
+  /* ---- data table ---- */
+  --table-toolbar: oklch(0.30 0.018 242 / 92%);
+  --table-toolbar-foreground: oklch(0.90 0.01 240);
+  --table-toolbar-border: oklch(0.88 0.02 240 / 14%);
+  --table-header: oklch(0.33 0.02 242);
+  --table-header-foreground: oklch(0.88 0.01 240);
+  --table-header-border: oklch(0.88 0.02 240 / 16%);
+  --table-row: oklch(0.30 0.018 242);
+  --table-row-alt: oklch(0.285 0.016 242);
+  --table-row-hover: oklch(0.35 0.022 240);
+  --table-cell-foreground: oklch(0.88 0.01 240);
+  --table-border: oklch(0.88 0.02 240 / 14%);
+  --table-surface: oklch(0.30 0.018 242);
 
   --gradient-app: linear-gradient(180deg, oklch(0.275 0.016 242) 0%, oklch(0.245 0.015 245) 100%);
   --gradient-surface: linear-gradient(180deg, oklch(0.30 0.018 242) 0%, oklch(0.275 0.016 245) 100%);
@@ -358,4 +400,70 @@
   }
 
   /* hero CTAs */
+
+  /* ---- data table surfaces ---- */
+  .table-shell {
+    @apply flex h-full min-h-0 w-full flex-col overflow-hidden;
+    color: var(--table-cell-foreground);
+  }
+
+  .table-toolbar {
+    @apply sticky top-0 z-20 flex shrink-0 flex-col gap-3 border-b px-4 py-3 backdrop-blur-md;
+    background-color: var(--table-toolbar);
+    color: var(--table-toolbar-foreground);
+    border-color: var(--table-toolbar-border);
+  }
+
+  .table-toolbar-search {
+    @apply flex flex-wrap items-center gap-2 rounded-md border px-3 py-2 pl-8;
+    background-color: var(--table-surface);
+    border-color: var(--table-border);
+  }
+
+  .table-body-region {
+    @apply flex min-h-0 flex-1 flex-col items-center justify-center overflow-auto p-4;
+  }
+
+  .table-surface {
+    @apply w-full overflow-hidden rounded-lg border;
+    background-color: var(--table-surface);
+    border-color: var(--table-border);
+  }
+
+  .table-head-row {
+    background-color: var(--table-header);
+    border-color: var(--table-header-border);
+  }
+
+  .table-head-cell {
+    @apply h-11 px-3 text-left text-xs font-semibold tracking-wide uppercase;
+    color: var(--table-header-foreground);
+    border-color: var(--table-header-border);
+    background-color: var(--table-header);
+  }
+
+  .table-body-row {
+    background-color: var(--table-row);
+    border-color: var(--table-border);
+    color: var(--table-cell-foreground);
+  }
+
+  .table-body-row:nth-child(even) {
+    background-color: var(--table-row-alt);
+  }
+
+  .table-body-row:hover {
+    background-color: var(--table-row-hover);
+  }
+
+  .table-body-cell {
+    @apply px-3 py-2.5 align-middle text-sm;
+    color: var(--table-cell-foreground);
+    border-color: var(--table-border);
+  }
+
+  .table-footer-bar {
+    @apply mt-3 flex flex-wrap items-center justify-between gap-3 text-sm;
+    color: var(--muted-foreground);
+  }
 }

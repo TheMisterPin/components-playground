@@ -24,7 +24,7 @@ ERP UI boilerplate. Prefer existing shared systems over one-off patterns. Human 
 | Errors (server) | `@/features/errors/server` + `dto` | same | same |
 | Toasts | `sonner` (`toast`) | error-handling + modals docs | — |
 | Shared zod | `src/lib/schemas/<model>.ts` | forms + error-handling | — |
-| Mock auth | `src/lib/auth/mock.ts` | error-handling | — |
+| Session / RBAC | `src/features/auth/session.ts` | error-handling | — |
 
 ## Hard conventions
 
@@ -61,9 +61,10 @@ if (data) toast.success("Saved")
 
 | Route | What it proves |
 |-------|----------------|
-| `/forms` | DynamicForm create/edit, `run()` submit, server validation bypass, error channels, Error Boundary |
-| `/modals` | notify / confirm / form + dirty guard |
-| `/login` | `SESSION_EXPIRED` acknowledge target + mock session restore |
+| `/login` | Auth gate entry + `SESSION_EXPIRED` acknowledge target |
+| `/team/members` | List-page CRUD (forms + modals + `run()`) |
+| `/organization/departments` | Org vertical + list CRUD |
+| `/organization/locations` | Org vertical + manager select + list CRUD |
 
 ## Adding a feature vertical
 
@@ -74,4 +75,4 @@ if (data) toast.success("Saved")
 5. Wire UI with `useError().run()` + `applyServerErrors`
 6. Update `.docs` / rules only when conventions change
 
-Auth is mocked (`src/lib/auth/mock.ts`). When a real backend lands, replace that module but keep `AppError` kinds/codes so the client channel table stays stable.
+Auth uses jose cookie sessions (`src/features/auth/utils.ts`) + Prisma users. Guards live in `src/features/auth/session.ts` and throw `AppError` with stable kinds/codes so the client channel table stays stable.
