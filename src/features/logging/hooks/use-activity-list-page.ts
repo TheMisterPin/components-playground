@@ -2,18 +2,16 @@
 
 import { useEffect, useMemo, useState } from "react"
 
-import { DynamicTable } from "@/components/shared/table/dynamic-table"
 import { Actions, can } from "@/features/auth/permissions"
 import { useAuth } from "@/features/auth/hooks/use-auth"
 import { useError } from "@/features/errors"
 import { listActivities } from "@/features/logging/actions/activity-actions"
-import {
-  activityTableColumns,
-  toActivityTableRow,
-} from "@/features/logging/components/tables/activity-table-columns"
+import type { ActivityListPageProps } from "@/features/logging/components/pages/activity-list-page"
+import { toActivityTableRow } from "@/features/logging/components/tables/activity-table-columns"
 import type { UserActivityItem } from "@/features/logging/types/activity-types"
 
-export function ActivityListPageComponent() {
+/** Page logic for activity list — inject into `ActivityListPage`. */
+export function useActivityListPage(): ActivityListPageProps {
   const { run } = useError()
   const { me } = useAuth()
   const [items, setItems] = useState<UserActivityItem[]>([])
@@ -42,32 +40,10 @@ export function ActivityListPageComponent() {
 
   const rows = useMemo(() => items.map(toActivityTableRow), [items])
 
-  if (!loaded) {
-    return <p className="p-4 text-sm text-muted-foreground">Loading…</p>
+  return {
+    loaded,
+    canRead,
+    items,
+    rows,
   }
-
-  if (!canRead) {
-    return (
-      <p className="p-4 text-sm text-muted-foreground">
-        You do not have permission to view activity logs.
-      </p>
-    )
-  }
-
-  if (items.length === 0) {
-    return (
-      <p className="p-4 text-sm text-muted-foreground">No activity yet.</p>
-    )
-  }
-
-  return (
-    <DynamicTable
-      data={rows}
-      columns={activityTableColumns}
-      pageSize={20}
-      searchable
-      sortable
-      filterable
-    />
-  )
 }

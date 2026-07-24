@@ -57,7 +57,8 @@ Seeded by `pnpm db:seed`:
 | **Error handling** — `ActionResult`, `withErrorBoundary`, `useError().run()` | Server actions + list CRUD | [`.docs/components/error-handling.md`](.docs/components/error-handling.md) | [`.cursor/rules/error-handling.mdc`](.cursor/rules/error-handling.mdc) |
 | **Auth / RBAC** — jose session, middleware, `Actions` / `authorize` / `can` | `/login`, list write gates | [`.docs/components/auth.md`](.docs/components/auth.md) | [`.cursor/rules/auth-rbac.mdc`](.cursor/rules/auth-rbac.mdc) |
 | **DynamicTable** — columns, toolbar/row actions | Members / org lists | [`.docs/components/tables.md`](.docs/components/tables.md) | [`.cursor/rules/dynamic-table.mdc`](.cursor/rules/dynamic-table.mdc) |
-| **List-page CRUD** — table + modals + RBAC | `/team/members`, org pages | [`.docs/components/list-pages.md`](.docs/components/list-pages.md) | [`.cursor/rules/list-page-crud.mdc`](.cursor/rules/list-page-crud.mdc) |
+| **List-page CRUD** — hook + stateless view + RBAC | `/team/members`, org pages | [`.docs/components/list-pages.md`](.docs/components/list-pages.md) | [`.cursor/rules/list-page-crud.mdc`](.cursor/rules/list-page-crud.mdc) |
+| **Feature architecture** — folder layout, hook → view | `src/features/users/` | [`.docs/components/architecture.md`](.docs/components/architecture.md) | [`.cursor/rules/feature-architecture.mdc`](.cursor/rules/feature-architecture.mdc) |
 | **Logging / audit** — `logActivity` + ADMIN activity list | `/team/activity`, login/logout | [`.docs/components/logging.md`](.docs/components/logging.md) | [`.cursor/rules/logging.mdc`](.cursor/rules/logging.mdc) |
 
 ### Layout

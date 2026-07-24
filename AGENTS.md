@@ -11,8 +11,9 @@ ERP UI boilerplate. Prefer existing shared systems over one-off patterns. Human 
 ## Before you write code
 
 1. Read the relevant guide under `.docs/components/` (and the matching `.cursor/rules/*.mdc` when editing those globs).
-2. Mirror the **users** vertical for new features (`src/features/users/`).
+2. Mirror the **users** vertical for new features (`src/features/users/`) — see `.docs/components/architecture.md`.
 3. Do not invent parallel form, modal, or error pipelines.
+4. **Stateless views**: page logic lives in `features/<f>/hooks/`; `app/` routes only inject hook output into the view.
 
 ## Systems (do not reinvent)
 
@@ -26,7 +27,8 @@ ERP UI boilerplate. Prefer existing shared systems over one-off patterns. Human 
 | Shared zod | `src/lib/schemas/<model>.ts` | forms + error-handling | — |
 | Auth / RBAC | `permissions.ts` (`Actions`, `can`) + `session.ts` (`authorize`) | `.docs/components/auth.md` | `auth-rbac.mdc` |
 | DynamicTable | `@/components/shared/table/dynamic-table` | `.docs/components/tables.md` | `dynamic-table.mdc` |
-| List-page CRUD | feature `*list-page-component.tsx` | `.docs/components/list-pages.md` | `list-page-crud.mdc` |
+| List-page CRUD | feature hook + `*list-page` view | `.docs/components/list-pages.md` | `list-page-crud.mdc` |
+| Feature architecture | `src/features/<f>/` layout | `.docs/components/architecture.md` | `feature-architecture.mdc` |
 | Logging / audit | `@/features/logging/server` → `logActivity` | `.docs/components/logging.md` | `logging.mdc` |
 
 ## Hard conventions
@@ -42,6 +44,7 @@ ERP UI boilerplate. Prefer existing shared systems over one-off patterns. Human 
 - **Layout**: Error Boundary wraps content only inside `AppShell` — leave sidebar/header outside. Providers in `AppProviders` (Modal → Auth → Error → ModalRoot).
 - **Import hygiene**: client may import `@/features/errors` (barrel). Never import `@/features/errors/server` from client code. Same for `@/features/logging` vs `@/features/logging/server`.
 - **Audit trail**: server `logActivity({ userId, activity, activityData? })` — never raw `prisma.userActivity.create`.
+- **Feature layout**: `types` → `actions` → `hooks` (state) → `components/{forms,tables,pages}` (stateless views). Route `page.tsx` = `useXListPage()` + `<XListPage {...page} />`. See `.docs/components/architecture.md`.
 - Named exports; strict TypeScript; no `any` on public APIs.
 
 ## Do not invent
@@ -85,15 +88,17 @@ if (data) toast.success("Saved")
 
 ## Adding a feature vertical
 
-1. `src/features/<feature>/types/` — model types
-2. `src/lib/schemas/<model>.ts` — shared zod
-3. Extend RBAC: `Permission`, `ROLE_PERMISSIONS`, `Actions.<feature>` in `permissions.ts`
-4. `components/forms/*-form-fields.ts` + thin `*Form`
-5. `components/tables/*-table-columns.tsx` + `toXTableRow`
-6. `actions/*-actions.ts` — `"use server"` + `withErrorBoundary` + `authorize` + soft-delete (`deletedAt`)
-7. Call `logActivity` from privileged mutations when an audit event is warranted (extend Prisma `Activity` enum first if needed)
-8. `components/pages/*list-page-component.tsx` — table + modal CRUD + `can(...)`
-9. Thin route under `src/app/(app)/…/page.tsx` + entry in `src/lib/navigation.ts`
-10. Update `.docs` / rules only when conventions change
+1. Reproduce `src/features/users/` folder layout (see `.docs/components/architecture.md`)
+2. `types/` — model types
+3. `src/lib/schemas/<model>.ts` — shared zod
+4. Extend RBAC: `Permission`, `ROLE_PERMISSIONS`, `Actions.<feature>` in `permissions.ts`
+5. `actions/*-actions.ts` — `"use server"` + `withErrorBoundary` + `authorize` + soft-delete (`deletedAt`)
+6. `components/forms/*-form-fields.ts` + thin `*Form`
+7. `components/tables/*-table-columns.tsx` + `toXTableRow`
+8. `hooks/use-*-list-page.tsx` — page state, modals, `run()`
+9. `components/pages/*-list-page.tsx` — **stateless** view + props type
+10. Route `src/app/(app)/…/page.tsx` — `const page = useX…(); return <XListPage {...page} />` + nav entry
+11. Call `logActivity` from privileged mutations when warranted (extend `Activity` enum first if needed)
+12. Update `.docs` / rules only when conventions change
 
 Auth uses jose cookie sessions (`src/features/auth/utils.ts`) + Prisma users. Guards live in `src/features/auth/session.ts` and throw `AppError` with stable kinds/codes so the client channel table stays stable.

@@ -22,8 +22,9 @@ src/features/logging/
   index.ts                  Client-safe barrel (types only)
   types/activity-types.ts   UserActivityItem + Activity re-export
   actions/activity-actions.ts
+  hooks/use-activity-list-page.ts
   components/tables/        Columns + toActivityTableRow
-  components/pages/         Read-only ActivityListPageComponent
+  components/pages/         Stateless ActivityListPage
 
 prisma/schema.prisma        UserActivity model + Activity enum
 ```

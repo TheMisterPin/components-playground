@@ -15,7 +15,7 @@ Use the shared `logActivity` helper on Prisma `UserActivity`. Do not invent para
 | Write helper (server-only) | `src/features/logging/server.ts` |
 | Types / client barrel | `src/features/logging/types`, `index.ts` |
 | List action | `src/features/logging/actions/activity-actions.ts` |
-| List UI | `components/pages/activitylist-page-component.tsx` |
+| List UI | `hooks/use-activity-list-page` + `components/pages/activity-list-page` |
 | Demo route | `/team/activity` |
 
 ## Writing
